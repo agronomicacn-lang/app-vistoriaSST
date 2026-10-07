@@ -1,6 +1,7 @@
 // Alegações (catálogo v1, M2): situação de cada alegação do pacote e o que foi informado sobre ela.
 import { adiado } from "../adiar.js";
 import { eventoSimples } from "../estado.js";
+import { rotuloAlegacao } from "../origem.js";
 import { h } from "./dom.js";
 
 function cartao(ctx, a) {
@@ -17,7 +18,7 @@ function cartao(ctx, a) {
   motivo.addEventListener("input", gravarMotivo);
   motivo.addEventListener("change", () => gravarMotivo.agora());
   return h("div", { class: s.situacao ? "cartao" : "cartao falta", id: `al-${a.id}` },
-    h("p", {}, h("strong", {}, `${a.id} · ${a.parte === "reclamada" ? "Contestação" : "Inicial"}`), a.fonte ? ` (${a.fonte})` : ""),
+    h("p", {}, h("strong", {}, rotuloAlegacao(a))),
     h("p", {}, a.texto),
     h("div", { class: "linha" },
       h("button", { type: "button", class: "chip", "aria-pressed": String(s.situacao === "abordada"),
@@ -34,6 +35,8 @@ export function desenhar(ctx, rota) {
   const alvo = rota.params.get("al");
   if (alvo) setTimeout(() => document.getElementById(`al-${alvo}`)?.scrollIntoView({ block: "start" }), 0);
   return h("section", {}, h("h1", {}, "Alegações"),
+    h("p", { class: "ajuda" }, "Alegações das partes como constam nos autos — não são fatos comprovados. " +
+      "O que for verificado aqui é registrado como fato."),
     lista.length ? null : h("p", {}, "O pacote não trouxe alegações."),
     lista.map((a) => cartao(ctx, a)));
 }

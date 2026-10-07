@@ -3,7 +3,7 @@
  "versao": 1,
  "gerador": "2.3.0",
  "catalogo_versao": "1.0.0",
- "gerado_em": "2026-10-07T09:39:43-03:00",
+ "gerado_em": "2026-10-07T16:25:42-03:00",
  "processo": {
   "numero": "0010000-00.2025.5.18.0101",
   "vara": "Vara",
@@ -51,8 +51,9 @@
   {
    "id": "AL1",
    "parte": "reclamante",
+   "documento": "Petição inicial",
    "texto": "Aplicava agrotóxicos com pulverizador costal na safra",
-   "fonte": "",
+   "fonte": "ID a1b2c3d, p. 4",
    "modulos": [
     "A4"
    ]
@@ -60,8 +61,9 @@
   {
    "id": "AL2",
    "parte": "reclamante",
+   "documento": "Petição inicial",
    "texto": "Operava trator sem cabine com ruído excessivo",
-   "fonte": "",
+   "fonte": "ID a1b2c3d, p. 4",
    "modulos": [
     "A1"
    ]
@@ -69,8 +71,9 @@
   {
    "id": "AL3",
    "parte": "reclamante",
+   "documento": "Petição inicial",
    "texto": "Abastecia o trator com diesel todos os dias",
-   "fonte": "",
+   "fonte": "ID a1b2c3d, p. 5",
    "modulos": [
     "A6"
    ]
@@ -78,8 +81,9 @@
   {
    "id": "AL4",
    "parte": "reclamante",
+   "documento": "Petição inicial",
    "texto": "Transportava 1.000 L de diesel em IBC na carroceria",
-   "fonte": "",
+   "fonte": "ID a1b2c3d, p. 5",
    "modulos": [
     "A6"
    ]
@@ -87,8 +91,9 @@
   {
    "id": "AL5",
    "parte": "reclamada",
+   "documento": "Contestação",
    "texto": "O abastecimento era feito apenas pelo encarregado",
-   "fonte": "",
+   "fonte": "ID e5f6a7b, p. 12",
    "modulos": [
     "A6"
    ]
@@ -126,5 +131,5 @@
   "PPP do(a) Reclamante",
   "Laudo de insalubridade/periculosidade da empresa"
  ],
- "sha256": "22135b5bb739f2f1436d51ba15c22919a8612330d8f145f91b181499899793cf"
+ "sha256": "ee8857b898d11d4451de71bd5173f08d3fef9cd39f732725e9a337efbab79893"
 }

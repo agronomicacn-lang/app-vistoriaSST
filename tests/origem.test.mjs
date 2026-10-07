@@ -80,3 +80,9 @@ test("número no formato brasileiro (milhar com ponto, decimal com vírgula)", a
   assert.equal(lerNumero(""), null);
   assert.equal(lerNumero("cerca de 10"), "cerca de 10");
 });
+
+test("rótulo da alegação: parte, documento e fonte; pacote antigo sem documento", () => {
+  assert.equal(o.rotuloAlegacao({ id: "AL1", parte: "reclamante", documento: "Petição inicial", fonte: "ID a1b2c3d, p. 4" }),
+    "AL1 · Reclamante · Petição inicial (ID a1b2c3d, p. 4)");
+  assert.equal(o.rotuloAlegacao({ id: "AL2", parte: "reclamada", fonte: "" }), "AL2 · Reclamada · Contestação");
+});

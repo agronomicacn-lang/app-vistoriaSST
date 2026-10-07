@@ -1,6 +1,6 @@
 // Service worker: guarda os arquivos do app para uso sem internet.
 // Rede primeiro (até 3 s), depois o que está guardado. O aviso de versão nova vem na Fase 4.
-const VERSAO = "vistoria-0.4.5";
+const VERSAO = "vistoria-0.4.6";
 const ARQUIVOS = [
  "./",
  "index.html",

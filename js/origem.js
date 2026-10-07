@@ -71,3 +71,10 @@ export function pendenciasDecisivo(f) {
     out.push({ documento: "ID do documento", nenhuma: "motivo da falta de confirmação", terceiro: "quem confirmou" }[c.tipo]);
   return out;
 }
+
+// cabeçalho do cartão da alegação: de quem é, de qual peça e onde está nos autos
+export function rotuloAlegacao(a) {
+  const reclamada = a.parte === "reclamada";
+  const doc = a.documento || (reclamada ? "Contestação" : "Inicial");
+  return `${a.id} · ${reclamada ? "Reclamada" : "Reclamante"} · ${doc}${a.fonte ? ` (${a.fonte})` : ""}`;
+}
