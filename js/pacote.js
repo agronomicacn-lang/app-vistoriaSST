@@ -20,12 +20,32 @@ export async function hashPacote(pacote) {
   return sha256Hex(canonico(resto));
 }
 
+// Bytes do arquivo como chegaram ao celular. O Chrome do Android pode salvar o pacote ainda compactado
+// (gzip do servidor) e com o nome "arquivo.bin": descompacta antes de ler.
+async function textoDosBytes(bytes) {
+  const inicio = String.fromCharCode(...bytes.subarray(0, 5));
+  if (inicio.startsWith("PK"))
+    throw new Error("Este arquivo é um .zip (talvez a exportação de uma diligência), não o pacote do processo.");
+  if (inicio === "%PDF-") throw new Error("Este arquivo é um PDF, não o pacote do processo.");
+  if (bytes[0] === 0x1f && bytes[1] === 0x8b) {
+    const fluxo = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
+    bytes = new Uint8Array(await new Response(fluxo).arrayBuffer());
+  }
+  return new TextDecoder().decode(bytes);
+}
+
 export async function avaliarPacote(texto, catalogo) {
   let pacote;
   try {
+    if (texto instanceof Uint8Array) texto = await textoDosBytes(texto);
+  } catch (e) {
+    return { ok: false, erro: e.message };
+  }
+  try {
     pacote = JSON.parse(String(texto).replace(/^\uFEFF/, ""));
   } catch {
-    return { ok: false, erro: "O arquivo não é um pacote de vistoria (conteúdo ilegível)." };
+    const tamanho = new TextEncoder().encode(String(texto)).length;
+    return { ok: false, erro: `O arquivo não é um pacote de vistoria (conteúdo ilegível; chegaram ${tamanho} bytes).` };
   }
   if (!pacote || pacote.tipo !== "pacote_vistoria" || pacote.versao !== 1)
     return { ok: false, erro: "O arquivo não é um pacote de vistoria gerado pelo PREPARAR VISTORIA." };

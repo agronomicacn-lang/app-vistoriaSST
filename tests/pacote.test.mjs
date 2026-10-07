@@ -2,6 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { gzipSync } from "node:zlib";
 import { avaliarPacote, canonico, hashPacote } from "../js/pacote.js";
 
 const catalogo = JSON.parse(readFileSync(new URL("../catalogo.json", import.meta.url), "utf8"));
@@ -27,6 +28,21 @@ test("pacote alterado é recusado", async () => {
 test("arquivo que não é pacote", async () => {
   assert.match((await avaliarPacote("nada", catalogo)).erro, /não é um pacote/);
   assert.match((await avaliarPacote('{"tipo":"vistoria"}', catalogo)).erro, /não é um pacote/);
+});
+
+test("bytes do arquivo como chegam ao celular: puro ou compactado (arquivo.bin do Chrome)", async () => {
+  const puro = readFileSync(new URL("./fixtures/pacote_demo.vistoria", import.meta.url));
+  assert.equal((await avaliarPacote(new Uint8Array(puro), catalogo)).ok, true);
+  const r = await avaliarPacote(new Uint8Array(gzipSync(puro)), catalogo);
+  assert.equal(r.ok, true);
+  assert.equal(r.pacote.processo.numero, "0010000-00.2025.5.18.0101");
+});
+
+test("arquivo errado diz o que é: zip exportado, PDF, ou o tamanho do que chegou", async () => {
+  const bytes = (s) => new TextEncoder().encode(s);
+  assert.match((await avaliarPacote(bytes("PK\u0003\u0004resto"), catalogo)).erro, /\.zip/);
+  assert.match((await avaliarPacote(bytes("%PDF-1.4 resto"), catalogo)).erro, /PDF/);
+  assert.match((await avaliarPacote(bytes("lixo"), catalogo)).erro, /ilegível.*4 bytes/);
 });
 
 test("versão diferente do catálogo gera aviso, não recusa", async () => {

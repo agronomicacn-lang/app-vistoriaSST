@@ -10,7 +10,7 @@ async function pacoteRecebido() {
   const r = await cache.match("pacote-recebido");
   if (!r) return null;
   await cache.delete("pacote-recebido");
-  return r.text();
+  return new Uint8Array(await r.arrayBuffer());
 }
 
 export function desenhar(ctx, rota) {
@@ -19,15 +19,15 @@ export function desenhar(ctx, rota) {
   const entrada = h("input", { type: "file" });
   entrada.addEventListener("change", async () => {
     const arq = entrada.files?.[0];
-    if (arq) await mostrar(ctx, area, await arq.text());
+    if (arq) await mostrar(ctx, area, new Uint8Array(await arq.arrayBuffer()));
   });
   const demo = new URLSearchParams(location.search).has("demo") &&
     h("button", { type: "button", onclick: async () =>
-      mostrar(ctx, area, await (await fetch("tests/fixtures/pacote_demo.vistoria")).text()) },
+      mostrar(ctx, area, new Uint8Array(await (await fetch("tests/fixtures/pacote_demo.vistoria")).arrayBuffer())) },
     "Usar pacote de demonstração (fictício)");
   if (rota?.params.get("recebido")) {
-    pacoteRecebido().then((texto) => {
-      if (texto) mostrar(ctx, area, texto);
+    pacoteRecebido().then((bytes) => {
+      if (bytes?.length) mostrar(ctx, area, bytes);
       else trocar(area, h("p", { class: "alerta" }, "Nenhum arquivo chegou pelo Compartilhar. Escolha o arquivo do pacote acima."));
     }).catch(() => {});
   }
@@ -49,8 +49,8 @@ export function desenhar(ctx, rota) {
     h("label", {}, "Arquivo do pacote", entrada), demo, area, guardadas);
 }
 
-async function mostrar(ctx, area, texto) {
-  const r = await avaliarPacote(texto, ctx.catalogo);
+async function mostrar(ctx, area, bytes) {
+  const r = await avaliarPacote(bytes, ctx.catalogo);
   if (!r.ok) {
     trocar(area, h("div", { class: "cartao falta", role: "alert" }, h("p", { class: "alerta" }, r.erro)));
     return;

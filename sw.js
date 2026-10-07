@@ -1,6 +1,6 @@
 // Service worker: guarda os arquivos do app para uso sem internet.
 // Rede primeiro (até 3 s), depois o que está guardado. O aviso de versão nova vem na Fase 4.
-const VERSAO = "vistoria-0.4.1";
+const VERSAO = "vistoria-0.4.2";
 const ARQUIVOS = [
  "./",
  "index.html",
@@ -67,8 +67,8 @@ self.addEventListener("fetch", (e) => {
       const dados = await e.request.formData();
       const arquivo = dados.getAll("pacote").find((x) => typeof x !== "string");
       const cache = await caches.open(RECEBIDO);
-      await cache.put("pacote-recebido", new Response(arquivo ? await arquivo.text() : "",
-        { headers: { "Content-Type": "application/json" } }));
+      // guarda os bytes como vieram (podem estar compactados): quem lê é a tela Abrir pacote
+      await cache.put("pacote-recebido", new Response(arquivo ?? new Blob([])));
       return Response.redirect(new URL("index.html#/abrir?recebido=1", self.registration.scope).href, 303);
     })());
     return;

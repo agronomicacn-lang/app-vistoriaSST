@@ -3,7 +3,7 @@
 // fato_restaurado, alegacao, participante, modulo_aberto.
 import { vazio } from "./texto.js";
 
-export const APP_VERSAO = "0.4.1";
+export const APP_VERSAO = "0.4.2";
 const SEMPRE = new Set(["M0", "M1", "M2", "M3", "M4", "MFIM"]);
 
 export function isoLocal(d = new Date()) {
