@@ -1,0 +1,130 @@
+{
+ "tipo": "pacote_vistoria",
+ "versao": 1,
+ "gerador": "2.3.0",
+ "catalogo_versao": "1.0.0",
+ "gerado_em": "2026-10-07T09:39:43-03:00",
+ "processo": {
+  "numero": "0010000-00.2025.5.18.0101",
+  "vara": "Vara",
+  "objeto": "Pedido fictício de teste",
+  "reclamante": "Pedro Fictício",
+  "reclamada": "Fazenda Fictícia Ltda",
+  "genero": "",
+  "funcao": "",
+  "funcao_fato": "",
+  "admissao": "01/03/2021",
+  "demissao": "30/11/2023"
+ },
+ "perito": {
+  "nome": "Perito Fictício",
+  "tratamento": "Perito"
+ },
+ "comunicacao": {
+  "meio": "",
+  "data": "",
+  "id_pje": ""
+ },
+ "participantes_previstos": [
+  {
+   "nome": "Pedro Fictício",
+   "qualidade": "Reclamante",
+   "registro": ""
+  },
+  {
+   "nome": "Fazenda Fictícia Ltda",
+   "qualidade": "Reclamada",
+   "registro": ""
+  },
+  {
+   "nome": "Ana Exemplo",
+   "qualidade": "Advogado(a) do(a) Reclamante",
+   "registro": ""
+  },
+  {
+   "nome": "Bruno Exemplo",
+   "qualidade": "Advogado(a) da Reclamada",
+   "registro": ""
+  }
+ ],
+ "alegacoes": [
+  {
+   "id": "AL1",
+   "parte": "reclamante",
+   "texto": "Aplicava agrotóxicos com pulverizador costal na safra",
+   "fonte": "",
+   "modulos": [
+    "A4"
+   ]
+  },
+  {
+   "id": "AL2",
+   "parte": "reclamante",
+   "texto": "Operava trator sem cabine com ruído excessivo",
+   "fonte": "",
+   "modulos": [
+    "A1"
+   ]
+  },
+  {
+   "id": "AL3",
+   "parte": "reclamante",
+   "texto": "Abastecia o trator com diesel todos os dias",
+   "fonte": "",
+   "modulos": [
+    "A6"
+   ]
+  },
+  {
+   "id": "AL4",
+   "parte": "reclamante",
+   "texto": "Transportava 1.000 L de diesel em IBC na carroceria",
+   "fonte": "",
+   "modulos": [
+    "A6"
+   ]
+  },
+  {
+   "id": "AL5",
+   "parte": "reclamada",
+   "texto": "O abastecimento era feito apenas pelo encarregado",
+   "fonte": "",
+   "modulos": [
+    "A6"
+   ]
+  }
+ ],
+ "quesitos": [
+  {
+   "origem": "Reclamante",
+   "numero": "1",
+   "texto": "Descreva as atividades."
+  }
+ ],
+ "modulos_acionados": [
+  "A1",
+  "A4",
+  "A6"
+ ],
+ "instrumentos": [
+  {
+   "codigo": "DOS-01",
+   "descricao": "Dosímetro Modelo X",
+   "serie": "123",
+   "certificado": "CERT-1",
+   "validade": ""
+  }
+ ],
+ "documentos_pendentes": [
+  "PGR – Programa de Gerenciamento de Riscos (NR-01)",
+  "LTCAT",
+  "PCMSO (NR-07) e ASOs do(a) Reclamante",
+  "Fichas de entrega de EPI (NR-06)",
+  "Certificados de Aprovação (CA) dos EPIs",
+  "FISPQ / FDS dos produtos químicos",
+  "Ordens de serviço e treinamentos",
+  "PPP do(a) Reclamante",
+  "Laudo de insalubridade/periculosidade da empresa"
+ ],
+ "sha256": "22135b5bb739f2f1436d51ba15c22919a8612330d8f145f91b181499899793cf"
+}

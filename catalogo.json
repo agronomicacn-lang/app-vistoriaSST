@@ -1,0 +1,345 @@
+{
+ "versao": "1.0.0",
+ "ano_safra_inicio": 7,
+ "origens": [
+  {"id": "constatado", "rotulo": "Constatado hoje", "atividade_periodo": false},
+  {"id": "demonstrado", "rotulo": "Demonstrado na diligência", "atividade_periodo": true},
+  {"id": "ambas", "rotulo": "Ambas as partes concordam", "atividade_periodo": true},
+  {"id": "reclamante", "rotulo": "Reclamante informou", "atividade_periodo": true},
+  {"id": "reclamada", "rotulo": "Reclamada informou", "atividade_periodo": true},
+  {"id": "terceiro", "rotulo": "Terceiro ou paradigma informou", "atividade_periodo": true},
+  {"id": "manifestacao", "rotulo": "Manifestação de assistente ou advogado", "atividade_periodo": true},
+  {"id": "documento", "rotulo": "Documento", "atividade_periodo": true},
+  {"id": "divergem", "rotulo": "Divergem", "atividade_periodo": true}
+ ],
+ "regras_bloqueio": [
+  {"id": "alegacao_sem_situacao", "texto": "Alegação sem situação"},
+  {"id": "decisivo_incompleto", "texto": "Fato decisivo sem posição da outra parte ou sem confirmação"},
+  {"id": "periculosidade_sem_corroboracao", "texto": "Só o reclamante confirma a atividade"},
+  {"id": "atividade_sem_periodo", "texto": "Atividade sem período ou meses"},
+  {"id": "quesito_sem_observacao", "texto": "Quesito sem observação"},
+  {"id": "documento_sem_prazo", "texto": "Documento solicitado sem prazo"},
+  {"id": "antecedencia_sem_justificativa", "texto": "Antecedência menor que 5 dias sem justificativa"}
+ ],
+ "etapas": [
+  {"id": "abertura", "titulo": "Abertura", "modulos": ["M0"]},
+  {"id": "entrevista", "titulo": "Entrevista", "modulos": ["M1", "M2"]},
+  {"id": "vistoria", "titulo": "Vistoria no campo", "modulos": ["M3", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A11", "A12", "A13"]},
+  {"id": "medicoes", "titulo": "Medições", "modulos": ["MMED"]},
+  {"id": "protecao", "titulo": "Proteção e documentos", "modulos": ["M4"]},
+  {"id": "quesitos", "titulo": "Quesitos", "modulos": ["MQ"]},
+  {"id": "encerramento", "titulo": "Encerramento e ata", "modulos": ["MFIM"]}
+ ],
+ "marcadores": [
+  {"id": "maquina", "rotulo": "Opera máquina", "modulos": ["A1", "A2", "A3"]},
+  {"id": "defensivo", "rotulo": "Prepara ou aplica defensivo", "modulos": ["A4"]},
+  {"id": "expurgo", "rotulo": "Expurgo de grãos", "modulos": ["A4", "A13"]},
+  {"id": "manutencao", "rotulo": "Manutenção mecânica ou lubrificação", "modulos": ["A5"]},
+  {"id": "abastece", "rotulo": "Abastece máquinas", "modulos": ["A6"]},
+  {"id": "transporta", "rotulo": "Transporta combustível", "modulos": ["A6"]},
+  {"id": "armazena", "rotulo": "Armazena combustível", "modulos": ["A6"]},
+  {"id": "animais", "rotulo": "Lida com animais, carcaças ou esterqueira", "modulos": ["A7", "A13"]},
+  {"id": "ordenha", "rotulo": "Limpeza de ordenha", "modulos": ["A13"]},
+  {"id": "eletricidade", "rotulo": "Eletricidade", "modulos": ["A8"]},
+  {"id": "solda", "rotulo": "Solda ou corte", "modulos": ["A11"]},
+  {"id": "frio_umidade", "rotulo": "Câmara fria ou área alagada", "modulos": ["A9"]},
+  {"id": "silo", "rotulo": "Silo ou armazém", "modulos": ["A1", "A10", "A13"]},
+  {"id": "secador", "rotulo": "Secador ou fornalha", "modulos": ["A1", "A3"]},
+  {"id": "poeira", "rotulo": "Poeira mineral", "modulos": ["A10"]},
+  {"id": "moto", "rotulo": "Usa motocicleta ou quadriciclo", "modulos": ["A12"]}
+ ],
+ "modulos": [
+  {"id": "M0", "titulo": "Abertura", "etapa": "abertura", "blocos": [{"id": "abertura", "titulo": "Abertura", "perguntas": [
+   {"id": "M0.data", "texto": "Data da diligência", "tipo": "data", "destino": {"processo": "data_dilig"}},
+   {"id": "M0.hora_ini", "texto": "Horário de início", "tipo": "hora", "destino": {"processo": "hora_ini"}},
+   {"id": "M0.local", "texto": "Local da diligência", "tipo": "texto", "destino": {"processo": "local_dilig"}},
+   {"id": "M0.com_meio", "texto": "Como as partes foram comunicadas?", "tipo": "multipla", "opcoes": ["Petição no PJe", "E-mail aos procuradores", "Telefone", "WhatsApp", "Outro"], "destino": {"processo": "comunicacao"}},
+   {"id": "M0.com_data", "texto": "Data da comunicação", "tipo": "data", "destino": {"processo": "comunicacao", "prefixo": "em "}},
+   {"id": "M0.com_id", "texto": "Comprovante da comunicação (ID no PJe)", "tipo": "texto", "destino": {"processo": "comunicacao", "prefixo": "comprovante "}},
+   {"id": "M0.antecedencia", "texto": "Antecedência da comunicação, em dias", "tipo": "numero", "destino": {"processo": "antecedencia"}},
+   {"id": "M0.antecedencia_just", "texto": "Justificativa para antecedência menor que 5 dias", "tipo": "texto", "destino": {"processo": "limitacoes"}},
+   {"id": "M0.presenca", "texto": "Lista de presença", "tipo": "assinatura", "destino": {"tabela": "PARTICIPANTES"}},
+   {"id": "M0.sem_representante", "texto": "Alguma parte ficou sem representante presente? Qual?", "tipo": "texto", "destino": {"processo": "limitacoes"}},
+   {"id": "M0.metodo", "texto": "Horário em que o método foi explicado às partes", "tipo": "hora", "destino": {"ata": true}},
+   {"id": "M0.deslocamento", "texto": "Deslocamento até o local", "tipo": "escolha", "opcoes": ["Veículo próprio", "Veículo da reclamada", "Veículo do reclamante", "Outro"], "destino": {"ata": true}},
+   {"id": "M0.foto_participantes", "texto": "Foto dos participantes (opcional, com aviso)", "tipo": "foto", "destino": {"tabela": "FOTOS"}},
+   {"id": "M0.audio", "texto": "Houve gravação de áudio com a anuência de todos?", "tipo": "simnao", "destino": {"ata": true}}
+  ]}]},
+  {"id": "M1", "titulo": "Contrato, função e períodos", "etapa": "entrevista", "blocos": [{"id": "funcao", "titulo": "Função e atividades", "perguntas": [
+   {"id": "M1.funcao", "texto": "Que função exercia e que tarefas fazia?", "tipo": "texto", "fato": true, "resumo": "função e tarefas", "destino": {"processo": "funcao_fato"}},
+   {"id": "M1.mudancas", "texto": "Houve mudança de função ou de local? De quando a quando?", "tipo": "lista", "fato": true, "resumo": "mudanças de função ou local", "campos": [{"id": "de", "rotulo": "De (mês/ano)"}, {"id": "ate", "rotulo": "Até (mês/ano)"}, {"id": "descricao", "rotulo": "O que mudou"}], "destino": {"tabela": "ATIVIDADES"}},
+   {"id": "M1.jornada", "texto": "Jornada em cada período do ano", "tipo": "lista", "fato": true, "resumo": "jornada", "campos": [{"id": "periodo", "rotulo": "Período (safra, entressafra, único)"}, {"id": "horario", "rotulo": "Horário"}, {"id": "intervalo", "rotulo": "Intervalo"}, {"id": "dias", "rotulo": "Dias"}], "destino": {"processo": "jornada"}},
+   {"id": "M1.atividades", "texto": "Atividades, uma por vez", "tipo": "lista", "fato": true, "resumo": "atividades", "campos": [{"id": "descricao", "rotulo": "O que fazia"}, {"id": "equipamento", "rotulo": "Equipamento ou produto"}, {"id": "vezes_dia", "rotulo": "Vezes por dia", "tipo": "numero"}, {"id": "minutos_evento", "rotulo": "Minutos por vez", "tipo": "numero"}, {"id": "horas_dia", "rotulo": "Horas por dia", "tipo": "numero"}, {"id": "dias_semana", "rotulo": "Dias por semana", "tipo": "numero"}, {"id": "periodo", "rotulo": "Período e meses", "tipo": "periodo"}, {"id": "fonte_tempo", "rotulo": "De onde vem o tempo informado"}], "destino": {"tabela": "ATIVIDADES"}},
+   {"id": "M1.marcadores", "texto": "O que a atividade envolvia?", "tipo": "multipla", "opcoes": ["maquina", "defensivo", "expurgo", "manutencao", "abastece", "transporta", "armazena", "animais", "ordenha", "eletricidade", "solda", "frio_umidade", "silo", "secador", "poeira", "moto"]}
+  ]}]},
+  {"id": "M2", "titulo": "Alegações", "etapa": "entrevista", "blocos": [{"id": "alegacoes", "titulo": "Alegações", "perguntas": [
+   {"id": "M2.alegacoes", "texto": "Alegações da inicial e da contestação", "tipo": "alegacoes"},
+   {"id": "M2.fato", "texto": "O que foi informado sobre esta alegação?", "tipo": "texto", "fato": true, "resumo": "sobre a alegação"}
+  ]}]},
+  {"id": "M3", "titulo": "Vistoria do local", "etapa": "vistoria", "blocos": [{"id": "vistoria", "titulo": "Vistoria", "perguntas": [
+   {"id": "M3.realizada", "texto": "A vistoria do local de trabalho foi realizada?", "tipo": "simnao", "destino": {"processo": "vistoria_realizada"}},
+   {"id": "M3.motivo", "texto": "Por que não foi possível vistoriar? Quem informou?", "tipo": "texto", "fato": true, "resumo": "motivo da falta de vistoria", "quando": {"pergunta": "M3.realizada", "valor": false}, "destino": {"processo": "motivo_sem_vistoria"}},
+   {"id": "M3.fontes", "texto": "Fontes usadas no lugar da vistoria", "tipo": "multipla", "opcoes": ["Entrevista com as partes", "Fotos ou vídeos dos autos", "Documentos", "Depoimentos da audiência", "Outro"], "quando": {"pergunta": "M3.realizada", "valor": false}, "destino": {"processo": "fontes_alternativas"}},
+   {"id": "M3.impacto", "texto": "O que ficou impossível de avaliar?", "tipo": "multipla", "opcoes": ["Medição de ruído", "Medição de calor", "Medição de vibração", "Medição de agentes químicos", "Inspeção do posto de trabalho", "Outro"], "quando": {"pergunta": "M3.realizada", "valor": false}, "destino": {"processo": "impacto_limitacao"}},
+   {"id": "M3.ocorrencias", "texto": "Ocorrências na diligência", "tipo": "lista", "campos": [{"id": "tipo", "rotulo": "Ocorrência (acesso negado, acesso limitado, máquina indisponível, recusa de documento, outra)"}, {"id": "quem", "rotulo": "Quem"}, {"id": "motivo", "rotulo": "Motivo informado"}], "destino": {"processo": "limitacoes"}},
+   {"id": "M3.mudancas", "texto": "Descreva o que mudou desde a saída do reclamante (máquinas, processo, produtos, layout) e desde quando", "tipo": "texto", "fato": true, "resumo": "mudanças desde o período do contrato", "destino": {"processo": "limitacoes"}},
+   {"id": "M3.local", "texto": "Atividade econômica, culturas e criações", "tipo": "texto", "destino": {"processo": "descricao_local"}},
+   {"id": "M3.ambientes", "texto": "Ambientes de trabalho", "tipo": "multipla", "opcoes": ["Céu aberto", "Galpão", "Oficina", "Depósito", "Silo ou armazém", "Câmara", "Outro"], "destino": {"processo": "descricao_local"}},
+   {"id": "M3.maquinas", "texto": "Máquinas operadas", "tipo": "lista", "campos": [{"id": "tipo", "rotulo": "Tipo"}, {"id": "marca_modelo", "rotulo": "Marca e modelo"}, {"id": "ano", "rotulo": "Ano"}, {"id": "cabine", "rotulo": "Cabine (fechada, aberta, sem cabine)"}, {"id": "ar", "rotulo": "Ar-condicionado"}, {"id": "conservacao", "rotulo": "Conservação"}, {"id": "mesma", "rotulo": "É a mesma do período do contrato?"}], "destino": {"processo": "descricao_local"}},
+   {"id": "M3.paradigma", "texto": "Paradigma acompanhado", "tipo": "lista", "campos": [{"id": "nome", "rotulo": "Nome"}, {"id": "indicado_por", "rotulo": "Quem indicou"}, {"id": "partes_concordam", "rotulo": "As partes concordaram?"}, {"id": "mesmas_tarefas", "rotulo": "Mesmas tarefas e período?"}, {"id": "vinculo", "rotulo": "Vínculo atual com a reclamada"}], "destino": {"processo": "limitacoes"}},
+   {"id": "M3.fotos", "texto": "Fotos do local e das máquinas", "tipo": "foto", "destino": {"tabela": "FOTOS"}}
+  ]}]},
+  {"id": "M4", "titulo": "Proteção e documentos", "etapa": "protecao", "blocos": [{"id": "protecao", "titulo": "Proteção e documentos", "perguntas": [
+   {"id": "M4.epis", "texto": "Equipamentos de proteção fornecidos", "tipo": "lista", "fato": true, "resumo": "EPI fornecidos", "campos": [{"id": "epi", "rotulo": "Equipamento"}, {"id": "ca", "rotulo": "CA"}, {"id": "entregas", "rotulo": "Datas das entregas"}, {"id": "ficha_assinada", "rotulo": "Ficha assinada?"}, {"id": "adequacao", "rotulo": "Para que agente era fornecido"}], "destino": {"tabela": "EPI"}},
+   {"id": "M4.uso", "texto": "Usava? Com que frequência? Quem fiscalizava? Há registro?", "tipo": "texto", "fato": true, "resumo": "uso e fiscalização", "destino": {"processo": "epi_conclusao"}},
+   {"id": "M4.treinamento", "texto": "Como era o treinamento? Por quem? Há registro?", "tipo": "texto", "fato": true, "resumo": "treinamento", "destino": {"processo": "epi_conclusao"}},
+   {"id": "M4.higienizacao", "texto": "Higienização, guarda e troca dos equipamentos; proteção respiratória", "tipo": "texto", "fato": true, "resumo": "higienização e troca", "destino": {"processo": "epi_conclusao"}},
+   {"id": "M4.epc", "texto": "Proteções coletivas existentes", "tipo": "texto", "destino": {"processo": "epc"}},
+   {"id": "M4.administrativas", "texto": "Medidas administrativas (programas, ordens de serviço, rodízio, pausas)", "tipo": "texto", "destino": {"processo": "administrativas"}},
+   {"id": "M4.documentos", "texto": "Documentos", "tipo": "lista", "campos": [{"id": "documento", "rotulo": "Documento"}, {"id": "situacao", "rotulo": "Situação (já nos autos, exibido na diligência, solicitado)"}, {"id": "id", "rotulo": "ID nos autos"}, {"id": "quem_exibiu", "rotulo": "Quem exibiu"}, {"id": "outra_parte_viu", "rotulo": "A outra parte viu?"}, {"id": "fotografado", "rotulo": "Fotografado?"}, {"id": "prazo", "rotulo": "Prazo para juntar no PJe"}], "destino": {"tabela": "DOCUMENTOS"}},
+   {"id": "M4.material_parte", "texto": "Fotos ou vídeos mostrados pelas partes no celular", "tipo": "lista", "campos": [{"id": "documento", "rotulo": "Descrição"}, {"id": "quem_exibiu", "rotulo": "Parte"}, {"id": "prazo", "rotulo": "Prazo para juntar no PJe"}], "destino": {"tabela": "DOCUMENTOS"}}
+  ]}]},
+  {"id": "A1", "titulo": "Ruído", "etapa": "vistoria", "gatilhos": {"marcadores": ["maquina", "silo", "secador"], "alegacao_regex": "\\bruido"}, "linha_nr": [{"aba": "NR15", "anexo": "1"}], "blocos": [
+   {"id": "fontes", "titulo": "Fontes", "perguntas": [
+    {"id": "A1.fontes", "texto": "Fontes de ruído", "tipo": "lista", "fato": true, "resumo": "fontes", "campos": [{"id": "fonte", "rotulo": "Máquina ou ferramenta"}, {"id": "modelo", "rotulo": "Modelo"}, {"id": "implemento", "rotulo": "Implemento acoplado"}, {"id": "rotacao", "rotulo": "Rotação ou marcha"}, {"id": "horas", "rotulo": "Horas por dia nessa fonte"}], "destino": {"nr": "constatada"}},
+    {"id": "A1.cabine", "texto": "Durante a operação, portas e vidros ficavam", "tipo": "escolha", "fato": true, "resumo": "cabine", "opcoes": ["Fechados", "Abertos", "Sem cabine"], "destino": {"nr": "constatada"}},
+    {"id": "A1.impacto", "texto": "Havia ruído de impacto (martelete, rebitagem, disparos)? Qual?", "tipo": "texto", "fato": true, "resumo": "ruído de impacto", "destino": {"nr": "constatada"}},
+    {"id": "A1.protetor", "texto": "Protetor auditivo", "tipo": "lista", "fato": true, "resumo": "protetor auditivo", "campos": [{"id": "tipo", "rotulo": "Tipo"}, {"id": "ca", "rotulo": "CA"}, {"id": "nrrsf", "rotulo": "NRRsf informado"}, {"id": "uso", "rotulo": "Tempo de uso efetivo"}, {"id": "troca", "rotulo": "Troca e higienização"}, {"id": "compat", "rotulo": "Usado com óculos ou boné?"}], "destino": {"nr": "protecao"}},
+    {"id": "A1.medir", "texto": "É possível medir em condição que represente o período?", "tipo": "simnao", "abre": "MMED"}
+   ]},
+   {"id": "periodo", "titulo": "Período", "perguntas": [
+    {"id": "A1.periodo", "texto": "Em que período e em que meses de cada ano-safra isso ocorria?", "tipo": "periodo", "fato": true, "resumo": "período", "destino": {"nr": "tempo"}},
+    {"id": "A1.tempo", "texto": "Com que frequência e por quanto tempo?", "tipo": "frequencia", "fato": true, "resumo": "frequência e duração", "destino": {"nr": "tempo"}},
+    {"id": "A1.fonte_tempo", "texto": "De onde vem a informação do tempo (horímetro, hectares por dia, ordens de serviço, caderno)?", "tipo": "texto", "fato": true, "resumo": "fonte do tempo", "destino": {"nr": "tempo"}},
+    {"id": "A1.atual", "texto": "A condição de hoje é a mesma do período do contrato? O que mudou e desde quando?", "tipo": "texto", "fato": true, "resumo": "condição atual x período", "destino": {"nr": "constatada"}}
+   ]}]},
+  {"id": "A2", "titulo": "Vibração", "etapa": "vistoria", "gatilhos": {"marcadores": ["maquina"], "alegacao_regex": "vibra"}, "linha_nr": [{"aba": "NR15", "anexo": "8"}], "blocos": [
+   {"id": "vibracao", "titulo": "Vibração", "perguntas": [
+    {"id": "A2.vci", "texto": "Máquinas em que trabalhava sentado ou de pé", "tipo": "lista", "fato": true, "resumo": "corpo inteiro", "campos": [{"id": "maquina", "rotulo": "Máquina"}, {"id": "implemento", "rotulo": "Implemento"}, {"id": "assento", "rotulo": "Assento (suspensão, conservação)"}, {"id": "pista", "rotulo": "Pista ou terreno"}, {"id": "pneus", "rotulo": "Pneus"}, {"id": "velocidade", "rotulo": "Velocidade"}], "destino": {"nr": "constatada"}},
+    {"id": "A2.tempo_mov", "texto": "Tempo efetivo em movimento por dia (não a jornada)", "tipo": "numero", "unidade": "h/dia", "fato": true, "resumo": "tempo efetivo em movimento", "destino": {"nr": "tempo"}},
+    {"id": "A2.vmb", "texto": "Ferramentas manuais", "tipo": "lista", "fato": true, "resumo": "mãos e braços", "campos": [{"id": "ferramenta", "rotulo": "Ferramenta"}, {"id": "acionamento", "rotulo": "Tempo efetivo de acionamento por dia"}], "destino": {"nr": "constatada"}},
+    {"id": "A2.medir", "texto": "É possível medir em condição que represente o período?", "tipo": "simnao", "abre": "MMED"}
+   ]},
+   {"id": "periodo", "titulo": "Período", "perguntas": [
+    {"id": "A2.periodo", "texto": "Em que período e em que meses de cada ano-safra isso ocorria?", "tipo": "periodo", "fato": true, "resumo": "período", "destino": {"nr": "tempo"}},
+    {"id": "A2.tempo", "texto": "Com que frequência e por quanto tempo?", "tipo": "frequencia", "fato": true, "resumo": "frequência e duração", "destino": {"nr": "tempo"}},
+    {"id": "A2.fonte_tempo", "texto": "De onde vem a informação do tempo (horímetro, hectares por dia, ordens de serviço, caderno)?", "tipo": "texto", "fato": true, "resumo": "fonte do tempo", "destino": {"nr": "tempo"}},
+    {"id": "A2.atual", "texto": "A condição de hoje é a mesma do período do contrato? O que mudou e desde quando?", "tipo": "texto", "fato": true, "resumo": "condição atual x período", "destino": {"nr": "constatada"}}
+   ]}]},
+  {"id": "A3", "titulo": "Calor", "etapa": "vistoria", "gatilhos": {"marcadores": ["maquina", "secador"], "alegacao_regex": "\\bcalor\\b|carga solar|\\bsol\\b"}, "linha_nr": [{"aba": "NR15", "anexo": "3"}], "blocos": [
+   {"id": "calor", "titulo": "Calor", "perguntas": [
+    {"id": "A3.fontes", "texto": "Fontes de calor presentes", "tipo": "multipla", "fato": true, "resumo": "fontes de calor", "opcoes": ["Sol", "Motor", "Fornalha ou secador", "Estufa", "Forno", "Outra"], "destino": {"nr": "constatada"}},
+    {"id": "A3.ambiente", "texto": "Ambiente", "tipo": "escolha", "fato": true, "resumo": "ambiente", "opcoes": ["Céu aberto", "Cabine com ar-condicionado", "Cabine sem ar-condicionado", "Recinto fechado"], "destino": {"nr": "constatada"}},
+    {"id": "A3.metabolica", "texto": "Atividades e minutos no período mais desfavorável de 60 minutos", "tipo": "lista", "fato": true, "resumo": "atividades no pior período de 60 min", "campos": [{"id": "atividade", "rotulo": "Atividade"}, {"id": "minutos", "rotulo": "Minutos"}], "destino": {"nr": "constatada"}},
+    {"id": "A3.vestimenta", "texto": "Vestimenta usada", "tipo": "texto", "fato": true, "resumo": "vestimenta", "destino": {"nr": "protecao"}},
+    {"id": "A3.medir", "texto": "É possível medir em condição que represente o período?", "tipo": "simnao", "abre": "MMED"}
+   ]},
+   {"id": "periodo", "titulo": "Período", "perguntas": [
+    {"id": "A3.periodo", "texto": "Em que período e em que meses de cada ano-safra isso ocorria?", "tipo": "periodo", "fato": true, "resumo": "período", "destino": {"nr": "tempo"}},
+    {"id": "A3.tempo", "texto": "Com que frequência e por quanto tempo?", "tipo": "frequencia", "fato": true, "resumo": "frequência e duração", "destino": {"nr": "tempo"}},
+    {"id": "A3.fonte_tempo", "texto": "De onde vem a informação do tempo (horímetro, hectares por dia, ordens de serviço, caderno)?", "tipo": "texto", "fato": true, "resumo": "fonte do tempo", "destino": {"nr": "tempo"}},
+    {"id": "A3.atual", "texto": "A condição de hoje é a mesma do período do contrato? O que mudou e desde quando?", "tipo": "texto", "fato": true, "resumo": "condição atual x período", "destino": {"nr": "constatada"}}
+   ]}]},
+  {"id": "A4", "titulo": "Agrotóxicos", "etapa": "vistoria", "gatilhos": {"marcadores": ["defensivo", "expurgo"], "alegacao_regex": "agrotox|defensiv|veneno|pesticid|herbicid|inseticid|fungicid|pulveriz"}, "linha_nr": [{"aba": "NR15", "anexo": "13"}], "blocos": [
+   {"id": "produtos", "titulo": "Produtos", "perguntas": [
+    {"id": "A4.produtos", "texto": "Produtos usados (veja a bula)", "tipo": "lista", "fato": true, "resumo": "produtos", "campos": [{"id": "nome", "rotulo": "Nome comercial"}, {"id": "principio", "rotulo": "Princípio ativo"}, {"id": "grupo", "rotulo": "Grupo químico (da bula)"}], "destino": {"nr": "constatada"}},
+    {"id": "A4.docs_periodo", "texto": "Documentos do período que provam as datas", "tipo": "multipla", "fato": true, "resumo": "documentos do período", "opcoes": ["Notas fiscais", "Receituários", "Caderno de aplicação", "Nenhum"], "destino": {"nr": "constatada"}}
+   ]},
+   {"id": "preparo", "titulo": "Preparo da calda", "perguntas": [
+    {"id": "A4.preparo", "texto": "Quem preparava a calda, onde e como (abertura de embalagem, dosagem, tríplice lavagem)?", "tipo": "texto", "fato": true, "resumo": "preparo da calda", "destino": {"nr": "constatada"}},
+    {"id": "A4.tanque", "texto": "Volume do tanque", "tipo": "numero", "unidade": "L", "fato": true, "resumo": "volume do tanque", "destino": {"nr": "constatada"}},
+    {"id": "A4.cargas", "texto": "Cargas preparadas por dia", "tipo": "numero", "fato": true, "resumo": "cargas por dia", "destino": {"nr": "tempo"}}
+   ]},
+   {"id": "aplicacao", "titulo": "Aplicação", "perguntas": [
+    {"id": "A4.equip", "texto": "Equipamento de aplicação", "tipo": "escolha", "fato": true, "resumo": "equipamento de aplicação", "opcoes": ["Costal", "Tratorizado sem cabine", "Tratorizado com cabine", "Autopropelido"], "destino": {"nr": "constatada"}},
+    {"id": "A4.ha_dia", "texto": "Hectares por dia", "tipo": "numero", "unidade": "ha/dia", "fato": true, "resumo": "hectares por dia", "destino": {"nr": "tempo"}},
+    {"id": "A4.aplicacoes", "texto": "Aplicações por safra", "tipo": "numero", "fato": true, "resumo": "aplicações por safra", "destino": {"nr": "tempo"}},
+    {"id": "A4.cabine_fechada", "texto": "A cabine ficava fechada durante a aplicação?", "tipo": "simnao", "fato": true, "resumo": "cabine fechada", "destino": {"nr": "protecao"}},
+    {"id": "A4.cabine_categoria", "texto": "Filtragem da cabine", "tipo": "escolha", "fato": true, "resumo": "filtragem da cabine", "opcoes": ["Categoria 4 (vapores)", "Outra categoria", "Não sabe"], "destino": {"nr": "protecao"}},
+    {"id": "A4.filtro_troca", "texto": "Data ou horas da última troca do filtro de carvão ativado; conservação e vedação", "tipo": "texto", "fato": true, "resumo": "troca do filtro", "destino": {"nr": "protecao"}},
+    {"id": "A4.exposicao", "texto": "Forma de exposição", "tipo": "multipla", "fato": true, "resumo": "forma de exposição", "opcoes": ["Direta no preparo", "Direta na aplicação", "Reentrada na área tratada", "Trabalho próximo à aplicação", "Deriva de aplicação aérea ou de terceiros"], "destino": {"nr": "constatada"}},
+    {"id": "A4.reentrada", "texto": "O intervalo de reentrada era respeitado?", "tipo": "texto", "fato": true, "resumo": "intervalo de reentrada", "destino": {"nr": "constatada"}}
+   ]},
+   {"id": "epi", "titulo": "Proteção do aplicador", "perguntas": [
+    {"id": "A4.epi", "texto": "Proteção usada", "tipo": "multipla", "fato": true, "resumo": "proteção do aplicador", "opcoes": ["Luva nitrílica", "Respirador semifacial com filtro combinado", "Respirador descartável", "Viseira", "Avental", "Botas", "Vestimenta hidrorrepelente certificada"], "destino": {"nr": "protecao"}},
+    {"id": "A4.respirador", "texto": "Troca do filtro, barba, ensaio de vedação", "tipo": "texto", "fato": true, "resumo": "respirador", "destino": {"nr": "protecao"}},
+    {"id": "A4.lavagem", "texto": "Quem lavava e guardava a proteção? Havia descontaminação ao fim da jornada?", "tipo": "texto", "fato": true, "resumo": "lavagem e descontaminação", "destino": {"nr": "protecao"}},
+    {"id": "A4.treinamento", "texto": "Fez curso de aplicador? Há certificado?", "tipo": "texto", "fato": true, "resumo": "curso de aplicador", "destino": {"nr": "protecao"}},
+    {"id": "A4.expurgo", "texto": "Fazia expurgo de grãos com fosfina?", "tipo": "simnao", "abre": "A13"}
+   ]},
+   {"id": "periodo", "titulo": "Período", "perguntas": [
+    {"id": "A4.periodo", "texto": "Em que período e em que meses de cada ano-safra isso ocorria?", "tipo": "periodo", "fato": true, "resumo": "período", "destino": {"nr": "tempo"}},
+    {"id": "A4.tempo", "texto": "Com que frequência e por quanto tempo?", "tipo": "frequencia", "fato": true, "resumo": "frequência e duração", "destino": {"nr": "tempo"}},
+    {"id": "A4.fonte_tempo", "texto": "De onde vem a informação do tempo (horímetro, hectares por dia, ordens de serviço, caderno)?", "tipo": "texto", "fato": true, "resumo": "fonte do tempo", "destino": {"nr": "tempo"}},
+    {"id": "A4.atual", "texto": "A condição de hoje é a mesma do período do contrato? O que mudou e desde quando?", "tipo": "texto", "fato": true, "resumo": "condição atual x período", "destino": {"nr": "constatada"}}
+   ]}]},
+  {"id": "A5", "titulo": "Óleos minerais, graxas e combustíveis", "etapa": "vistoria", "gatilhos": {"marcadores": ["manutencao"], "alegacao_regex": "\\boleos?\\b|graxa|hidrocarbon|solvente|lubrific"}, "linha_nr": [{"aba": "NR15", "anexo": "13"}], "blocos": [
+   {"id": "contato", "titulo": "Contato com a pele", "perguntas": [
+    {"id": "A5.tarefa", "texto": "Tarefas", "tipo": "multipla", "fato": true, "resumo": "tarefas", "opcoes": ["Manipulação manual (troca de óleo, engraxamento)", "Lavagem de peças com diesel sob pressão", "Limpeza de peças com solvente", "Outra"], "destino": {"nr": "constatada"}},
+    {"id": "A5.produtos", "texto": "Produtos", "tipo": "texto", "fato": true, "resumo": "produtos", "destino": {"nr": "constatada"}},
+    {"id": "A5.partes", "texto": "Partes do corpo em contato", "tipo": "multipla", "fato": true, "resumo": "partes do corpo", "opcoes": ["Mãos", "Antebraços", "Outras"], "destino": {"nr": "constatada"}},
+    {"id": "A5.maos_diesel", "texto": "Lavava as mãos com diesel?", "tipo": "simnao", "fato": true, "resumo": "lavava as mãos com diesel", "destino": {"nr": "constatada"}},
+    {"id": "A5.uniforme", "texto": "Quem lavava o uniforme sujo de óleo?", "tipo": "texto", "fato": true, "resumo": "lavagem do uniforme", "destino": {"nr": "constatada"}},
+    {"id": "A5.protecao", "texto": "Luvas e creme de proteção", "tipo": "lista", "fato": true, "resumo": "luvas e creme", "campos": [{"id": "tipo", "rotulo": "Tipo"}, {"id": "ca", "rotulo": "CA"}], "destino": {"nr": "protecao"}},
+    {"id": "A5.oficina", "texto": "A manutenção pesada era feita por oficina terceirizada?", "tipo": "simnao", "fato": true, "resumo": "oficina terceirizada", "destino": {"nr": "constatada"}}
+   ]},
+   {"id": "periodo", "titulo": "Período", "perguntas": [
+    {"id": "A5.periodo", "texto": "Em que período e em que meses de cada ano-safra isso ocorria?", "tipo": "periodo", "fato": true, "resumo": "período", "destino": {"nr": "tempo"}},
+    {"id": "A5.tempo", "texto": "Com que frequência e por quanto tempo?", "tipo": "frequencia", "fato": true, "resumo": "frequência e duração", "destino": {"nr": "tempo"}},
+    {"id": "A5.fonte_tempo", "texto": "De onde vem a informação do tempo (horímetro, hectares por dia, ordens de serviço, caderno)?", "tipo": "texto", "fato": true, "resumo": "fonte do tempo", "destino": {"nr": "tempo"}},
+    {"id": "A5.atual", "texto": "A condição de hoje é a mesma do período do contrato? O que mudou e desde quando?", "tipo": "texto", "fato": true, "resumo": "condição atual x período", "destino": {"nr": "constatada"}}
+   ]}]},
+  {"id": "A6", "titulo": "Inflamáveis", "etapa": "vistoria", "periculosidade": true, "gatilhos": {"marcadores": ["abastece", "transporta", "armazena"], "alegacao_regex": "inflama|diesel|gasolina|etanol|combustive|abastec"}, "linha_nr": [{"aba": "NR16", "anexo": "2"}], "blocos": [
+   {"id": "produto", "titulo": "Produto", "perguntas": [
+    {"id": "A6.produto", "texto": "Produto", "tipo": "escolha", "fato": true, "resumo": "produto", "opcoes": ["Diesel S10", "Diesel S500", "Gasolina", "Etanol", "Outro"], "destino": {"nr": "constatada"}},
+    {"id": "A6.fispq", "texto": "A ficha de segurança do produto foi fotografada?", "tipo": "simnao", "fato": true, "resumo": "ficha de segurança fotografada", "destino": {"nr": "constatada"}}
+   ]},
+   {"id": "abastecimento", "titulo": "Abastecimento", "perguntas": [
+    {"id": "A6.ab.origem", "texto": "De onde vinha o combustível no abastecimento?", "tipo": "escolha", "fato": true, "resumo": "origem do abastecimento", "opcoes": ["Bomba fixa", "Tanque aéreo", "Tanque ou IBC em caminhonete", "Tambor", "Galão"], "destino": {"nr": "constatada"}},
+    {"id": "A6.ab.operava", "texto": "Operava a bomba ou o bico de abastecimento?", "tipo": "simnao", "fato": true, "resumo": "operava a bomba ou o bico", "destino": {"nr": "constatada"}},
+    {"id": "A6.ab.distancia", "texto": "Se não operava, a que distância ficava do bico ou da bomba?", "tipo": "numero", "unidade": "m", "fato": true, "resumo": "distância do bico ou da bomba", "destino": {"nr": "constatada"}},
+    {"id": "A6.ab.permanecia", "texto": "Permanecia por perto quando outra pessoa abastecia?", "tipo": "simnao", "fato": true, "resumo": "permanecia por perto", "destino": {"nr": "constatada"}},
+    {"id": "A6.ab.so_propria", "texto": "Abastecia só o tanque da própria máquina?", "tipo": "simnao", "fato": true, "resumo": "só o tanque da própria máquina", "destino": {"nr": "constatada"}},
+    {"id": "A6.ab.freq", "texto": "Frequência e duração dos abastecimentos", "tipo": "frequencia", "fato": true, "resumo": "abastecimentos", "destino": {"nr": "tempo"}},
+    {"id": "A6.ab.docs", "texto": "Documentos que mostram os abastecimentos", "tipo": "multipla", "fato": true, "resumo": "documentos de abastecimento", "opcoes": ["Planilha de controle", "Notas de compra de diesel", "Nenhum"], "destino": {"nr": "constatada"}}
+   ]},
+   {"id": "transporte", "titulo": "Transporte", "perguntas": [
+    {"id": "A6.tr.volume", "texto": "Volume por viagem", "tipo": "numero", "unidade": "L", "fato": true, "resumo": "volume por viagem", "destino": {"nr": "constatada"}},
+    {"id": "A6.tr.recipiente", "texto": "Recipiente", "tipo": "escolha", "fato": true, "resumo": "recipiente", "opcoes": ["Tambor", "IBC de 1.000 litros", "Tanque", "Galões"], "destino": {"nr": "constatada"}},
+    {"id": "A6.tr.certificado", "texto": "O tanque ou a embalagem é certificado (foto da placa ou etiqueta)?", "tipo": "escolha", "fato": true, "resumo": "recipiente certificado", "opcoes": ["Sim", "Não", "Não sabe"], "destino": {"nr": "constatada"}},
+    {"id": "A6.tr.veiculo", "texto": "Veículo", "tipo": "texto", "fato": true, "resumo": "veículo", "destino": {"nr": "constatada"}},
+    {"id": "A6.tr.freq", "texto": "Frequência das viagens", "tipo": "frequencia", "fato": true, "resumo": "viagens", "destino": {"nr": "tempo"}},
+    {"id": "A6.tr.distancia", "texto": "Distância percorrida", "tipo": "numero", "unidade": "km", "fato": true, "resumo": "distância", "destino": {"nr": "constatada"}}
+   ]},
+   {"id": "armazenamento", "titulo": "Armazenamento", "perguntas": [
+    {"id": "A6.ar.volume", "texto": "Volume armazenado", "tipo": "numero", "unidade": "L", "fato": true, "resumo": "volume armazenado", "destino": {"nr": "constatada"}},
+    {"id": "A6.ar.tipo", "texto": "Tipo de armazenamento", "tipo": "escolha", "fato": true, "resumo": "tipo de armazenamento", "opcoes": ["Tanque aéreo", "Tanque enterrado", "Tambores"], "destino": {"nr": "constatada"}},
+    {"id": "A6.ar.bacia", "texto": "Há bacia de contenção?", "tipo": "simnao", "fato": true, "resumo": "bacia de contenção", "destino": {"nr": "constatada"}},
+    {"id": "A6.ar.local", "texto": "Local do armazenamento", "tipo": "texto", "fato": true, "resumo": "local", "destino": {"nr": "constatada"}},
+    {"id": "A6.ar.distancia", "texto": "Distância do posto de trabalho", "tipo": "numero", "unidade": "m", "fato": true, "resumo": "distância do posto de trabalho", "destino": {"nr": "constatada"}}
+   ]},
+   {"id": "confirmacao", "titulo": "Confirmação", "perguntas": [
+    {"id": "A6.confirma", "texto": "Quem confirma esta atividade além do reclamante?", "tipo": "escolha", "fato": true, "resumo": "confirmação além do reclamante", "opcoes": ["Preposto", "Paradigma", "Planilha de abastecimento", "Nota fiscal de diesel", "Ninguém"], "destino": {"nr": "constatada"}},
+    {"id": "A6.confirma_motivo", "texto": "Se ninguém confirma, por quê?", "tipo": "texto", "fato": true, "resumo": "motivo da falta de confirmação", "destino": {"nr": "constatada"}}
+   ]},
+   {"id": "periodo", "titulo": "Período", "perguntas": [
+    {"id": "A6.periodo", "texto": "Em que período e em que meses de cada ano-safra isso ocorria?", "tipo": "periodo", "fato": true, "resumo": "período", "destino": {"nr": "tempo"}},
+    {"id": "A6.fonte_tempo", "texto": "De onde vem a informação do tempo (horímetro, hectares por dia, ordens de serviço, caderno)?", "tipo": "texto", "fato": true, "resumo": "fonte do tempo", "destino": {"nr": "tempo"}},
+    {"id": "A6.atual", "texto": "A condição de hoje é a mesma do período do contrato? O que mudou e desde quando?", "tipo": "texto", "fato": true, "resumo": "condição atual x período", "destino": {"nr": "constatada"}}
+   ]}]},
+  {"id": "A7", "titulo": "Agentes biológicos", "etapa": "vistoria", "gatilhos": {"marcadores": ["animais"], "alegacao_regex": "biologic|\\blixo\\b|esgoto|sangue|carcaca|dejeto|animais"}, "linha_nr": [{"aba": "NR15", "anexo": "14"}], "blocos": [
+   {"id": "biologicos", "titulo": "Contato", "perguntas": [
+    {"id": "A7.local", "texto": "Local", "tipo": "multipla", "fato": true, "resumo": "local", "opcoes": ["Estábulo", "Cavalariça", "Curral", "Sala de ordenha", "Pasto", "Laboratório ou clínica veterinária"], "destino": {"nr": "constatada"}},
+    {"id": "A7.diagnostico", "texto": "Havia animal com diagnóstico de brucelose, tuberculose ou carbúnculo? Há documento?", "tipo": "texto", "fato": true, "resumo": "animal com diagnóstico", "destino": {"nr": "constatada"}},
+    {"id": "A7.carcacas", "texto": "Manuseio de carcaças, placentas, fetos abortados ou resíduos deteriorados", "tipo": "frequencia", "fato": true, "resumo": "carcaças e resíduos", "destino": {"nr": "tempo"}},
+    {"id": "A7.esgoto", "texto": "Esgoto ou fossa", "tipo": "multipla", "fato": true, "resumo": "esgoto ou fossa", "opcoes": ["Galerias ou tanques de esgoto", "Limpeza de fossa", "Nenhum"], "destino": {"nr": "constatada"}},
+    {"id": "A7.lixo", "texto": "Lixo", "tipo": "escolha", "fato": true, "resumo": "lixo", "opcoes": ["Urbano ou sanitário coletivo", "Doméstico da sede", "Nenhum"], "destino": {"nr": "constatada"}},
+    {"id": "A7.epi", "texto": "Proteção usada", "tipo": "texto", "fato": true, "resumo": "proteção", "destino": {"nr": "protecao"}}
+   ]},
+   {"id": "periodo", "titulo": "Período", "perguntas": [
+    {"id": "A7.periodo", "texto": "Em que período e em que meses de cada ano-safra isso ocorria?", "tipo": "periodo", "fato": true, "resumo": "período", "destino": {"nr": "tempo"}},
+    {"id": "A7.tempo", "texto": "Com que frequência e por quanto tempo?", "tipo": "frequencia", "fato": true, "resumo": "frequência e duração", "destino": {"nr": "tempo"}},
+    {"id": "A7.fonte_tempo", "texto": "De onde vem a informação do tempo (horímetro, hectares por dia, ordens de serviço, caderno)?", "tipo": "texto", "fato": true, "resumo": "fonte do tempo", "destino": {"nr": "tempo"}},
+    {"id": "A7.atual", "texto": "A condição de hoje é a mesma do período do contrato? O que mudou e desde quando?", "tipo": "texto", "fato": true, "resumo": "condição atual x período", "destino": {"nr": "constatada"}}
+   ]}]},
+  {"id": "A8", "titulo": "Eletricidade", "etapa": "vistoria", "periculosidade": true, "gatilhos": {"marcadores": ["eletricidade"], "alegacao_regex": "energia eletrica|eletricidade|alta tensao|energizad"}, "linha_nr": [{"aba": "NR16", "anexo": "4"}], "blocos": [
+   {"id": "eletricidade", "titulo": "Eletricidade", "perguntas": [
+    {"id": "A8.tensao", "texto": "Tensão nominal", "tipo": "texto", "fato": true, "resumo": "tensão", "destino": {"nr": "constatada"}},
+    {"id": "A8.instalacao", "texto": "Instalações", "tipo": "multipla", "fato": true, "resumo": "instalações", "opcoes": ["Rede de média tensão", "Poste ou transformador", "Quadro de distribuição", "Bombas de irrigação", "Outra"], "destino": {"nr": "constatada"}},
+    {"id": "A8.atividades", "texto": "Atividades", "tipo": "multipla", "fato": true, "resumo": "atividades", "opcoes": ["Troca de chave-fusível", "Manobra", "Manutenção", "Ligar e desligar"], "destino": {"nr": "constatada"}},
+    {"id": "A8.desenergizado", "texto": "O circuito era desligado e bloqueado antes do serviço?", "tipo": "simnao", "fato": true, "resumo": "circuito desligado e bloqueado", "destino": {"nr": "constatada"}},
+    {"id": "A8.autorizacao", "texto": "Tinha autorização formal e treinamento para serviços em eletricidade?", "tipo": "texto", "fato": true, "resumo": "autorização e treinamento", "destino": {"nr": "constatada"}},
+    {"id": "A8.confirma", "texto": "Quem confirma esta atividade além do reclamante?", "tipo": "escolha", "fato": true, "resumo": "confirmação além do reclamante", "opcoes": ["Preposto", "Paradigma", "Documento", "Ninguém"], "destino": {"nr": "constatada"}},
+    {"id": "A8.confirma_motivo", "texto": "Se ninguém confirma, por quê?", "tipo": "texto", "fato": true, "resumo": "motivo da falta de confirmação", "destino": {"nr": "constatada"}}
+   ]},
+   {"id": "periodo", "titulo": "Período", "perguntas": [
+    {"id": "A8.periodo", "texto": "Em que período e em que meses de cada ano-safra isso ocorria?", "tipo": "periodo", "fato": true, "resumo": "período", "destino": {"nr": "tempo"}},
+    {"id": "A8.tempo", "texto": "Com que frequência e por quanto tempo?", "tipo": "frequencia", "fato": true, "resumo": "frequência e duração", "destino": {"nr": "tempo"}},
+    {"id": "A8.fonte_tempo", "texto": "De onde vem a informação do tempo (horímetro, hectares por dia, ordens de serviço, caderno)?", "tipo": "texto", "fato": true, "resumo": "fonte do tempo", "destino": {"nr": "tempo"}},
+    {"id": "A8.atual", "texto": "A condição de hoje é a mesma do período do contrato? O que mudou e desde quando?", "tipo": "texto", "fato": true, "resumo": "condição atual x período", "destino": {"nr": "constatada"}}
+   ]}]},
+  {"id": "A9", "titulo": "Frio e umidade", "etapa": "vistoria", "gatilhos": {"marcadores": ["frio_umidade"], "alegacao_regex": "\\bfrio\\b|camara fria|frigorif|umidade|alagad|encharcad"}, "linha_nr": [{"aba": "NR15", "anexo": "9", "quando": {"pergunta": "A9.tipo", "valor": "Câmara fria ou de sementes"}}, {"aba": "NR15", "anexo": "10", "quando": {"pergunta": "A9.tipo", "valor": "Área alagada ou encharcada"}}], "blocos": [
+   {"id": "frio", "titulo": "Frio e umidade", "perguntas": [
+    {"id": "A9.tipo", "texto": "Situação", "tipo": "escolha", "fato": true, "resumo": "situação", "opcoes": ["Câmara fria ou de sementes", "Área alagada ou encharcada"], "destino": {"nr": "constatada"}},
+    {"id": "A9.temperatura", "texto": "Temperatura medida na câmara e instrumento usado", "tipo": "texto", "fato": true, "resumo": "temperatura medida", "destino": {"nr": "constatada"}},
+    {"id": "A9.ciclos", "texto": "Tempo contínuo dentro e ciclos de entrada e saída", "tipo": "texto", "fato": true, "resumo": "tempo dentro e ciclos", "destino": {"nr": "tempo"}},
+    {"id": "A9.agua", "texto": "Tempo com pés ou mãos na água", "tipo": "texto", "fato": true, "resumo": "tempo na água", "destino": {"nr": "tempo"}},
+    {"id": "A9.vestimenta", "texto": "Vestimenta, botas e luvas (tipo e CA); pausas", "tipo": "texto", "fato": true, "resumo": "vestimenta e pausas", "destino": {"nr": "protecao"}}
+   ]},
+   {"id": "periodo", "titulo": "Período", "perguntas": [
+    {"id": "A9.periodo", "texto": "Em que período e em que meses de cada ano-safra isso ocorria?", "tipo": "periodo", "fato": true, "resumo": "período", "destino": {"nr": "tempo"}},
+    {"id": "A9.tempo", "texto": "Com que frequência e por quanto tempo?", "tipo": "frequencia", "fato": true, "resumo": "frequência e duração", "destino": {"nr": "tempo"}},
+    {"id": "A9.fonte_tempo", "texto": "De onde vem a informação do tempo (horímetro, hectares por dia, ordens de serviço, caderno)?", "tipo": "texto", "fato": true, "resumo": "fonte do tempo", "destino": {"nr": "tempo"}},
+    {"id": "A9.atual", "texto": "A condição de hoje é a mesma do período do contrato? O que mudou e desde quando?", "tipo": "texto", "fato": true, "resumo": "condição atual x período", "destino": {"nr": "constatada"}}
+   ]}]},
+  {"id": "A10", "titulo": "Poeira mineral", "etapa": "vistoria", "gatilhos": {"marcadores": ["poeira", "silo"], "alegacao_regex": "poeira|silica|asbesto|amianto"}, "linha_nr": [{"aba": "NR15", "anexo": "13", "quando": {"pergunta": "A10.origem", "valor": "Bagaço de cana"}}, {"aba": "NR15", "anexo": "12"}], "blocos": [
+   {"id": "poeira", "titulo": "Poeira", "perguntas": [
+    {"id": "A10.origem", "texto": "Origem da poeira", "tipo": "escolha", "fato": true, "resumo": "origem", "opcoes": ["Solo arenoso", "Pedreira", "Jateamento", "Polimento", "Poeira de grãos", "Bagaço de cana", "Outra"], "destino": {"nr": "constatada"}},
+    {"id": "A10.protecao", "texto": "Proteção respiratória (tipo e CA)", "tipo": "texto", "fato": true, "resumo": "proteção respiratória", "destino": {"nr": "protecao"}},
+    {"id": "A10.medir", "texto": "É possível medir em condição que represente o período?", "tipo": "simnao", "abre": "MMED"}
+   ]},
+   {"id": "periodo", "titulo": "Período", "perguntas": [
+    {"id": "A10.periodo", "texto": "Em que período e em que meses de cada ano-safra isso ocorria?", "tipo": "periodo", "fato": true, "resumo": "período", "destino": {"nr": "tempo"}},
+    {"id": "A10.tempo", "texto": "Com que frequência e por quanto tempo?", "tipo": "frequencia", "fato": true, "resumo": "frequência e duração", "destino": {"nr": "tempo"}},
+    {"id": "A10.fonte_tempo", "texto": "De onde vem a informação do tempo (horímetro, hectares por dia, ordens de serviço, caderno)?", "tipo": "texto", "fato": true, "resumo": "fonte do tempo", "destino": {"nr": "tempo"}},
+    {"id": "A10.atual", "texto": "A condição de hoje é a mesma do período do contrato? O que mudou e desde quando?", "tipo": "texto", "fato": true, "resumo": "condição atual x período", "destino": {"nr": "constatada"}}
+   ]}]},
+  {"id": "A11", "titulo": "Solda, corte e radiação", "etapa": "vistoria", "gatilhos": {"marcadores": ["solda"], "alegacao_regex": "solda|radiac"}, "linha_nr": [{"aba": "NR15", "anexo": "7"}, {"aba": "NR15", "anexo": "11", "quando": {"pergunta": "A11.fumos", "valor": true}}], "blocos": [
+   {"id": "solda", "titulo": "Solda e corte", "perguntas": [
+    {"id": "A11.processo", "texto": "Processo", "tipo": "escolha", "fato": true, "resumo": "processo", "opcoes": ["Eletrodo revestido", "MIG/MAG", "TIG", "Oxicorte", "Outro"], "destino": {"nr": "constatada"}},
+    {"id": "A11.material", "texto": "Material soldado", "tipo": "escolha", "fato": true, "resumo": "material", "opcoes": ["Aço carbono", "Galvanizado", "Inox", "Outro"], "destino": {"nr": "constatada"}},
+    {"id": "A11.ventilacao", "texto": "Local e ventilação", "tipo": "texto", "fato": true, "resumo": "local e ventilação", "destino": {"nr": "constatada"}},
+    {"id": "A11.tempo_arco", "texto": "Tempo de arco por dia", "tipo": "numero", "unidade": "h/dia", "fato": true, "resumo": "tempo de arco", "destino": {"nr": "tempo"}},
+    {"id": "A11.mascara", "texto": "Máscara de solda e proteção respiratória (tipo e CA)", "tipo": "texto", "fato": true, "resumo": "máscara e proteção respiratória", "destino": {"nr": "protecao"}},
+    {"id": "A11.fumos", "texto": "Os fumos foram medidos?", "tipo": "simnao", "abre": "MMED"},
+    {"id": "A11.sol", "texto": "Trabalhava exposto ao sol?", "tipo": "simnao", "fato": true, "resumo": "exposição ao sol", "destino": {"nr": "constatada"}}
+   ]},
+   {"id": "periodo", "titulo": "Período", "perguntas": [
+    {"id": "A11.periodo", "texto": "Em que período e em que meses de cada ano-safra isso ocorria?", "tipo": "periodo", "fato": true, "resumo": "período", "destino": {"nr": "tempo"}},
+    {"id": "A11.tempo", "texto": "Com que frequência e por quanto tempo?", "tipo": "frequencia", "fato": true, "resumo": "frequência e duração", "destino": {"nr": "tempo"}},
+    {"id": "A11.fonte_tempo", "texto": "De onde vem a informação do tempo (horímetro, hectares por dia, ordens de serviço, caderno)?", "tipo": "texto", "fato": true, "resumo": "fonte do tempo", "destino": {"nr": "tempo"}},
+    {"id": "A11.atual", "texto": "A condição de hoje é a mesma do período do contrato? O que mudou e desde quando?", "tipo": "texto", "fato": true, "resumo": "condição atual x período", "destino": {"nr": "constatada"}}
+   ]}]},
+  {"id": "A12", "titulo": "Motocicleta ou quadriciclo", "etapa": "vistoria", "periculosidade": true, "gatilhos": {"marcadores": ["moto"], "alegacao_regex": "motocicl|\\bmoto\\b|motoboy|quadriciclo"}, "linha_nr": [{"aba": "NR16", "anexo": "5"}], "blocos": [
+   {"id": "moto", "titulo": "Veículo e vias", "perguntas": [
+    {"id": "A12.veiculo", "texto": "Veículo", "tipo": "escolha", "fato": true, "resumo": "veículo", "opcoes": ["Motocicleta com placa", "Quadriciclo", "Outro"], "destino": {"nr": "constatada"}},
+    {"id": "A12.cnh", "texto": "Exigia carteira de habilitação?", "tipo": "simnao", "fato": true, "resumo": "exigia habilitação", "destino": {"nr": "constatada"}},
+    {"id": "A12.dono", "texto": "De quem era o veículo e para que era usado?", "tipo": "texto", "fato": true, "resumo": "dono e uso", "destino": {"nr": "constatada"}},
+    {"id": "A12.vias", "texto": "Vias percorridas", "tipo": "lista", "fato": true, "resumo": "vias", "campos": [{"id": "tipo", "rotulo": "Tipo (interna ou privada, estrada vicinal de acesso a propriedades, via pública aberta)"}, {"id": "qual", "rotulo": "Qual"}, {"id": "percentual", "rotulo": "% do tempo"}], "destino": {"nr": "constatada"}},
+    {"id": "A12.confirma", "texto": "Quem confirma esta atividade além do reclamante?", "tipo": "escolha", "fato": true, "resumo": "confirmação além do reclamante", "opcoes": ["Preposto", "Paradigma", "Documento", "Ninguém"], "destino": {"nr": "constatada"}},
+    {"id": "A12.confirma_motivo", "texto": "Se ninguém confirma, por quê?", "tipo": "texto", "fato": true, "resumo": "motivo da falta de confirmação", "destino": {"nr": "constatada"}}
+   ]},
+   {"id": "periodo", "titulo": "Período", "perguntas": [
+    {"id": "A12.periodo", "texto": "Em que período e em que meses de cada ano-safra isso ocorria?", "tipo": "periodo", "fato": true, "resumo": "período", "destino": {"nr": "tempo"}},
+    {"id": "A12.tempo", "texto": "Com que frequência e por quanto tempo?", "tipo": "frequencia", "fato": true, "resumo": "frequência e duração", "destino": {"nr": "tempo"}},
+    {"id": "A12.fonte_tempo", "texto": "De onde vem a informação do tempo (horímetro, hectares por dia, ordens de serviço, caderno)?", "tipo": "texto", "fato": true, "resumo": "fonte do tempo", "destino": {"nr": "tempo"}},
+    {"id": "A12.atual", "texto": "A condição de hoje é a mesma do período do contrato? O que mudou e desde quando?", "tipo": "texto", "fato": true, "resumo": "condição atual x período", "destino": {"nr": "constatada"}}
+   ]}]},
+  {"id": "A13", "titulo": "Gases e vapores", "etapa": "vistoria", "gatilhos": {"marcadores": ["expurgo", "animais", "ordenha", "silo"], "alegacao_regex": "fosfina|amonia|gases|vapores|esterqueira|expurgo"}, "linha_nr": [{"aba": "NR15", "anexo": "11"}], "blocos": [
+   {"id": "gases", "titulo": "Gases e vapores", "perguntas": [
+    {"id": "A13.fontes", "texto": "Fontes", "tipo": "multipla", "fato": true, "resumo": "fontes", "opcoes": ["Expurgo com fosfina", "Amônia em aviário ou suinocultura", "Gás sulfídrico em esterqueira ou biodigestor", "Monóxido de carbono de motor em recinto fechado", "Produtos de limpeza da ordenha", "Outra"], "destino": {"nr": "constatada"}},
+    {"id": "A13.ordenha", "texto": "Produtos de limpeza da ordenha", "tipo": "lista", "fato": true, "resumo": "produtos da ordenha", "campos": [{"id": "produto", "rotulo": "Produto"}, {"id": "concentracao", "rotulo": "Concentração"}, {"id": "quem_diluia", "rotulo": "Quem diluía"}], "destino": {"nr": "constatada"}},
+    {"id": "A13.recinto", "texto": "Recinto", "tipo": "escolha", "fato": true, "resumo": "recinto", "opcoes": ["Silo", "Armazém", "Galpão", "Outro"], "destino": {"nr": "constatada"}},
+    {"id": "A13.protecao", "texto": "Proteção respiratória (tipo e CA)", "tipo": "texto", "fato": true, "resumo": "proteção respiratória", "destino": {"nr": "protecao"}},
+    {"id": "A13.registro", "texto": "Trabalho em silo, espaço confinado ou em altura (registro)", "tipo": "multipla", "fato": true, "resumo": "silo, espaço confinado ou altura", "opcoes": ["Silo ou espaço confinado", "Trabalho em altura"], "destino": {"nr": "constatada"}},
+    {"id": "A13.medir", "texto": "É possível medir em condição que represente o período?", "tipo": "simnao", "abre": "MMED"}
+   ]},
+   {"id": "periodo", "titulo": "Período", "perguntas": [
+    {"id": "A13.periodo", "texto": "Em que período e em que meses de cada ano-safra isso ocorria?", "tipo": "periodo", "fato": true, "resumo": "período", "destino": {"nr": "tempo"}},
+    {"id": "A13.tempo", "texto": "Com que frequência e por quanto tempo?", "tipo": "frequencia", "fato": true, "resumo": "frequência e duração", "destino": {"nr": "tempo"}},
+    {"id": "A13.fonte_tempo", "texto": "De onde vem a informação do tempo (horímetro, hectares por dia, ordens de serviço, caderno)?", "tipo": "texto", "fato": true, "resumo": "fonte do tempo", "destino": {"nr": "tempo"}},
+    {"id": "A13.atual", "texto": "A condição de hoje é a mesma do período do contrato? O que mudou e desde quando?", "tipo": "texto", "fato": true, "resumo": "condição atual x período", "destino": {"nr": "constatada"}}
+   ]}]},
+  {"id": "MMED", "titulo": "Medições", "etapa": "medicoes", "blocos": [{"id": "medicoes", "titulo": "Medições", "perguntas": [
+   {"id": "MMED.medicoes", "texto": "Medições", "tipo": "lista", "campos": [{"id": "instrumento", "rotulo": "Instrumento (código do cadastro)"}, {"id": "verificacao", "rotulo": "Verificação antes e depois (desvio)"}, {"id": "agente", "rotulo": "Agente (ruído contínuo, ruído de impacto, calor, vibração de corpo inteiro, vibração de mãos e braços, agente químico ou gás, poeira mineral, fumos metálicos)"}, {"id": "ponto", "rotulo": "Ponto ou atividade"}, {"id": "quem_escolheu", "rotulo": "Quem escolheu a máquina ou o ponto"}, {"id": "partes_concordaram", "rotulo": "As partes concordaram?"}, {"id": "representa", "rotulo": "Por que representa o período"}, {"id": "tempo", "rotulo": "Tempo de medição"}, {"id": "resultado", "rotulo": "Resultado"}, {"id": "unidade", "rotulo": "Unidade"}, {"id": "q5", "rotulo": "Dosímetro, circuito q=5"}, {"id": "q3", "rotulo": "Dosímetro, circuito q=3"}, {"id": "aren", "rotulo": "aren"}, {"id": "vdvr", "rotulo": "VDVR"}], "destino": {"tabela": "MEDICOES"}}
+  ]}]},
+  {"id": "MQ", "titulo": "Quesitos", "etapa": "quesitos", "blocos": [{"id": "quesitos", "titulo": "Quesitos", "perguntas": [
+   {"id": "MQ.quesitos", "texto": "Observação colhida para cada quesito", "tipo": "quesitos", "destino": {"tabela": "QUESITOS"}},
+   {"id": "MQ.suplementares", "texto": "Quesitos suplementares apresentados na diligência", "tipo": "lista", "campos": [{"id": "parte", "rotulo": "Parte"}, {"id": "texto", "rotulo": "Texto"}], "destino": {"tabela": "QUESITOS"}}
+  ]}]},
+  {"id": "MFIM", "titulo": "Encerramento e ata", "etapa": "encerramento", "blocos": [{"id": "encerramento", "titulo": "Encerramento", "perguntas": [
+   {"id": "MFIM.hora_fim", "texto": "Horário de término", "tipo": "hora", "destino": {"processo": "hora_fim"}},
+   {"id": "MFIM.ressalvas", "texto": "Ressalvas de cada parte", "tipo": "lista", "campos": [{"id": "parte", "rotulo": "Parte"}, {"id": "texto", "rotulo": "Ressalva"}], "destino": {"ata": true}}
+  ]}]}
+ ]
+}
