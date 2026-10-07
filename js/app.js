@@ -3,6 +3,7 @@ import { gravarPendentes } from "./adiar.js";
 import { abrirBanco, acrescentarEvento, eventosDe, listarDiligencias, salvarDiligencia } from "./db.js";
 import { aplicar, isoLocal, reconstruir } from "./estado.js";
 import { calcularFaltas } from "./faltas.js";
+import { deveAbrirRecebidos, ehNativo, recebidosNativos, sairDoApp } from "./nativo.js";
 import { criarFila } from "./fila.js";
 import * as abrir from "./ui/abrir.js";
 import * as alegacoes from "./ui/alegacoes.js";
@@ -64,8 +65,8 @@ ctx.salvarCopia = async () => {
   if (!ctx.estado) return;
   try {
     const exp = await exportar.gerarArquivo(ctx);
-    exportar.baixar(exp.nome, exp.blob);
-    aviso("Cópia de segurança salva em Downloads.");
+    // no aplicativo o próprio baixar avisa onde salvou (ou por que não salvou)
+    if (await exportar.baixar(exp.nome, exp.blob) && !ehNativo()) aviso("Cópia de segurança salva em Downloads.");
   } catch (e) {
     aviso(`Não foi possível salvar a cópia (${e?.message ?? e}).`);
   }
@@ -147,10 +148,7 @@ function erroAoAbrir(e) {
 function salvarCopia() {
   const blob = new Blob([JSON.stringify(ctx.estado)], { type: "application/json" });
   const numero = String(ctx.estado?.processo?.numero ?? "sem_numero").replace(/[^\w.-]/g, "-");
-  const a = h("a", { href: URL.createObjectURL(blob), download: `Copia_vistoria_${numero}_${Date.now()}.json` });
-  document.body.append(a);
-  a.click();
-  a.remove();
+  return exportar.baixar(`Copia_vistoria_${numero}_${Date.now()}.json`, blob, "application/json");
 }
 
 function atualizarCabecalho() {
@@ -212,15 +210,18 @@ function protegerSaida() {
   history.pushState({}, "");
   addEventListener("popstate", (e) => {
     if (!e.state?.raiz) return;
-    if (confirm("Sair do app de vistoria? Tudo o que foi registrado já está salvo no aparelho.")) history.back();
-    else history.pushState({}, "");
+    if (!confirm("Sair do app de vistoria? Tudo o que foi registrado já está salvo no aparelho.")) history.pushState({}, "");
+    else if (ehNativo()) { // aplicativo instalado: vai para o fundo, nada é fechado
+      history.pushState({}, "");
+      sairDoApp().catch(() => {});
+    } else history.back();
   });
 }
 
 // versão nova do app: avisa e só atualiza com um toque. Os dados ficam no aparelho e o formato da
 // diligência é versionado, então uma diligência em andamento continua igual depois da atualização.
 function registrarServiceWorker() {
-  if (!("serviceWorker" in navigator)) return;
+  if (ehNativo() || !("serviceWorker" in navigator)) return; // o APK já traz os arquivos; versão nova = APK novo
   const oferecer = (sw) => aviso("Versão nova do app disponível.",
     { rotulo: "Atualizar", acao: () => sw.postMessage("atualizar") }, 600000);
   navigator.serviceWorker.register("sw.js").then((reg) => {
@@ -240,6 +241,20 @@ function registrarServiceWorker() {
   });
 }
 
+// aplicativo instalado: pacote recebido pelo "Abrir com" / "Compartilhar" do Android
+async function buscarRecebidos() {
+  if (!ehNativo() || !deveAbrirRecebidos(ctx)) return;
+  try {
+    const r = await recebidosNativos();
+    if (!r.recebido) return;
+    ctx.recebidos = r;
+    if (location.hash === "#/abrir?recebido=1") desenhar();
+    else location.hash = "#/abrir?recebido=1";
+  } catch (e) {
+    aviso(`Não foi possível ler o arquivo recebido (${e?.message ?? e}).`);
+  }
+}
+
 async function iniciarApp() {
   ctx.catalogo = await (await fetch("catalogo.json")).json();
   try {
@@ -252,7 +267,7 @@ async function iniciarApp() {
   document.getElementById("olho").addEventListener("click",
     () => mostrarPrivada(!document.body.classList.contains("privada-visivel")));
   document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) return;
+    if (!document.hidden) return void buscarRecebidos();
     gravarPendentes();
     mostrarPrivada(false);
   });
@@ -263,6 +278,7 @@ async function iniciarApp() {
   addEventListener("hashchange", desenhar);
   desenhar();
   registrarServiceWorker();
+  buscarRecebidos();
 }
 
 iniciarApp();

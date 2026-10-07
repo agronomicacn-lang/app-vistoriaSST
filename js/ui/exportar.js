@@ -3,6 +3,7 @@
 // emitido pelo PC libera a exclusão da diligência do celular.
 import { apagarDiligencia, atualizarDiligencia, fotosDaDiligencia, listarDiligencias } from "../db.js";
 import { montarExportacao } from "../exportacao.js";
+import { compartilharNativo, ehNativo, salvarNativo } from "../nativo.js";
 import { aviso, h, trocar } from "./dom.js";
 
 // as fotos entram como o Blob original (sem cópia na memória)
@@ -18,18 +19,32 @@ function exportacaoTravada(ctx) {
   return ctx.exportacao.promessa;
 }
 
-export function baixar(nome, dados, tipo = "application/zip") {
-  const url = URL.createObjectURL(dados instanceof Blob ? dados : new Blob([dados], { type: tipo }));
+// devolve true quando o arquivo foi salvo (no navegador, quando o download foi entregue ao navegador)
+export async function baixar(nome, dados, tipo = "application/zip") {
+  const blob = dados instanceof Blob ? dados : new Blob([dados], { type: tipo });
+  if (ehNativo()) { // aplicativo instalado: grava direto na pasta Downloads do celular
+    try {
+      const r = await salvarNativo(nome, blob, tipo);
+      aviso(`Salvo em ${r?.local ?? "Downloads"}.`);
+      return true;
+    } catch (e) {
+      aviso(`Não foi possível salvar (${e?.message ?? e}). Use "Compartilhar".`);
+      return false;
+    }
+  }
+  const url = URL.createObjectURL(blob);
   const a = h("a", { href: url, download: nome });
   document.body.append(a);
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 60000);
+  return true;
 }
 
 async function compartilhar(ctx, arquivo, como) {
   try {
-    await navigator.share({ files: [arquivo], title: arquivo.name });
+    if (ehNativo()) await compartilharNativo(arquivo.name, arquivo, arquivo.type);
+    else await navigator.share({ files: [arquivo], title: arquivo.name });
     await registrarEnvio(ctx, como);
     ctx.redesenhar();
   } catch (e) {
@@ -45,8 +60,8 @@ function mostrar(ctx, area, exp) {
   const arquivo = new File([exp.blob], exp.nome, { type: "application/zip" });
   const ata = new File([exp.ata], `Ata_diligencia_${ctx.estado.processo.numero.replace(/[^\w.-]/g, "-")}.pdf`,
     { type: "application/pdf" });
-  const compartilha = Boolean(navigator.canShare?.({ files: [arquivo] }));
-  const compartilhaAta = Boolean(navigator.canShare?.({ files: [ata] }));
+  const compartilha = ehNativo() || Boolean(navigator.canShare?.({ files: [arquivo] }));
+  const compartilhaAta = ehNativo() || Boolean(navigator.canShare?.({ files: [ata] }));
   const recibo = h("input", { type: "text", "aria-label": "Recibo do PC", maxlength: "8", autocapitalize: "characters" });
   const resposta = h("div");
   const historico = h("div");
@@ -63,16 +78,14 @@ function mostrar(ctx, area, exp) {
     h("div", { class: "linha" },
       compartilhaAta ? h("button", { type: "button", onclick: () => compartilhar(ctx, ata, "ata compartilhada") }, "Compartilhar a ata (PDF)") : null,
       h("button", { type: "button", onclick: async () => {
-        baixar(ata.name, ata);
-        await registrarEnvio(ctx, "ata salva em Downloads");
+        if (await baixar(ata.name, ata)) await registrarEnvio(ctx, "ata salva em Downloads");
         ctx.redesenhar();
       } }, "Salvar a ata (PDF)")),
     h("h2", {}, "Arquivo completo para o PC"),
     compartilha ? h("button", { type: "button", class: "primario", onclick: () => compartilhar(ctx, arquivo, "arquivo compartilhado") },
       "Compartilhar o arquivo completo (WhatsApp como documento, ou e-mail)") : null,
     h("button", { type: "button", class: compartilha ? "" : "primario", onclick: async () => {
-      baixar(exp.nome, exp.blob);
-      await registrarEnvio(ctx, "arquivo salvo em Downloads");
+      if (await baixar(exp.nome, exp.blob)) await registrarEnvio(ctx, "arquivo salvo em Downloads");
       ctx.redesenhar();
     } }, "Salvar o arquivo completo em Downloads"),
     h("h2", {}, "Envios"), historico,

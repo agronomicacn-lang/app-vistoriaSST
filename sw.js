@@ -1,6 +1,6 @@
 // Service worker: guarda os arquivos do app para uso sem internet.
 // Rede primeiro (até 3 s), depois o que está guardado. O aviso de versão nova vem na Fase 4.
-const VERSAO = "vistoria-0.4.6";
+const VERSAO = "vistoria-0.5.0";
 const ARQUIVOS = [
  "./",
  "index.html",
@@ -43,7 +43,8 @@ const ARQUIVOS = [
  "fontes/AtkinsonHyperlegible-Regular.ttf",
  "fontes/AtkinsonHyperlegible-Bold.ttf",
  "fontes/OFL.txt",
- "js/recebido.js"
+ "js/recebido.js",
+ "js/nativo.js"
 ];
 
 self.addEventListener("install", (e) => {

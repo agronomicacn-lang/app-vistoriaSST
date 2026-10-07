@@ -2,8 +2,9 @@
 // entrega); assinaturas em sequência, com a opção de registrar a recusa.
 import { linhasDaAta } from "../ata.js";
 import { fatoDe } from "../estado.js";
+import { abrirNativo, ehNativo } from "../nativo.js";
 import { montarPdf } from "../pdf.js";
-import { h } from "./dom.js";
+import { aviso, h } from "./dom.js";
 
 export function desenhar(ctx) {
   const itens = linhasDaAta(ctx.estado, ctx.pacote, ctx.catalogo, {});
@@ -26,8 +27,13 @@ export function desenhar(ctx) {
     h("div", { class: "linha" },
       ctx.estado.travada_em ? h("a", { class: "botao", href: "#/exportar" }, "A ata final, com o código, está em Exportar ▸")
         : h("button", { type: "button", onclick: () => {
-          const url = URL.createObjectURL(new Blob([montarPdf(itens, { rodape: "PRÉVIA" })], { type: "application/pdf" }));
-          window.open(url, "_blank");
+          const pdf = new Blob([montarPdf(itens, { rodape: "PRÉVIA" })], { type: "application/pdf" });
+          if (ehNativo()) { // aplicativo instalado: abre no leitor de PDF do celular
+            abrirNativo("Previa_ata.pdf", pdf, "application/pdf")
+              .catch((e) => aviso(`Não foi possível abrir a prévia (${e?.message ?? e}).`));
+            return;
+          }
+          window.open(URL.createObjectURL(pdf), "_blank");
         } }, "Ver a prévia em PDF"),
       h("a", { class: "botao", href: "#/encerramento" }, "◂ Encerramento")));
 }

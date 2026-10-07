@@ -1,4 +1,5 @@
 // Montagem de elementos sem framework.
+import { ehNativo, telaAcesaNativa } from "../nativo.js";
 export function h(tag, attrs = {}, ...filhos) {
   const el = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs ?? {})) {
@@ -63,6 +64,7 @@ document.addEventListener("visibilitychange", () => {
 
 export async function telaAcesa(sim) {
   telaDesejada = sim;
+  if (ehNativo()) return telaAcesaNativa(sim).catch(() => {}); // aplicativo instalado: o Android mantém
   try {
     if (sim && !travaDeTela) travaDeTela = await navigator.wakeLock?.request("screen");
     else if (!sim && travaDeTela) {

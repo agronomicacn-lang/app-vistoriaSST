@@ -20,7 +20,9 @@ export function desenhar(ctx, rota) {
   if (rota?.params.get("recebido")) {
     // lido uma vez só: recarregar a tela (ex.: "Atualizar") não procura de novo
     history.replaceState(null, "", "#/abrir");
-    caches.open("vistoria-recebido").then(lerRecebidos).then((r) => {
+    const doAplicativo = ctx.recebidos; // aplicativo instalado: já veio do Android (app.js)
+    ctx.recebidos = null;
+    (doAplicativo ? Promise.resolve(doAplicativo) : caches.open("vistoria-recebido").then(lerRecebidos)).then((r) => {
       if (!r) return; // já aberto antes
       if (r.lista.some((b) => b.length)) mostrar(ctx, area, r.lista, `O Android enviou: ${r.recebido}`);
       else trocar(area, h("p", { class: "alerta" }, "Nenhum arquivo chegou pelo Compartilhar. Escolha o arquivo do pacote acima."),

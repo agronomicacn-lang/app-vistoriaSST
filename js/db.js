@@ -1,4 +1,6 @@
 // Armazenamento no aparelho (IndexedDB): diligências e eventos (lista que só cresce).
+import { ehNativo } from "./nativo.js";
+
 const NOME = "vistoria";
 const VERSAO = 1;
 let banco;
@@ -37,6 +39,7 @@ export const eventosDe = (diligencia) =>
     .then((lista) => lista.map((x) => x.evento));
 
 export async function pedirPersistencia() {
+  if (ehNativo()) return true; // aplicativo instalado: os dados não são apagados pela limpeza do navegador
   try {
     return (await navigator.storage?.persist?.()) ?? false;
   } catch {
