@@ -2,22 +2,8 @@
 import { pedirPersistencia } from "../db.js";
 import { eventoIniciar } from "../estado.js";
 import { avaliarPacote, avaliarRecebidos } from "../pacote.js";
+import { lerRecebidos } from "../recebido.js";
 import { h, trocar } from "./dom.js";
-
-// pacote recebido pelo "Compartilhar" do Android: o service worker o guarda e abre esta tela
-async function pacoteRecebido() {
-  const cache = await caches.open("vistoria-recebido");
-  const r = await cache.match("pacote-recebido");
-  if (!r) return null;
-  const lista = [];
-  for (let i = 0; i < Number(r.headers.get("X-Quantos") ?? 0); i++) {
-    const a = await cache.match(`pacote-recebido/${i}`);
-    if (a) lista.push(new Uint8Array(await a.arrayBuffer()));
-    await cache.delete(`pacote-recebido/${i}`);
-  }
-  await cache.delete("pacote-recebido");
-  return { lista, recebido: decodeURIComponent(r.headers.get("X-Recebido") ?? "") };
-}
 
 export function desenhar(ctx, rota) {
   const area = h("div");
@@ -32,10 +18,14 @@ export function desenhar(ctx, rota) {
       mostrar(ctx, area, new Uint8Array(await (await fetch("tests/fixtures/pacote_demo.vistoria")).arrayBuffer())) },
     "Usar pacote de demonstração (fictício)");
   if (rota?.params.get("recebido")) {
-    pacoteRecebido().then((r) => {
-      if (r?.lista.some((b) => b.length)) mostrar(ctx, area, r.lista, `O Android enviou: ${r.recebido}`);
-      else trocar(area, h("p", { class: "alerta" }, "Nenhum arquivo chegou pelo Compartilhar. Escolha o arquivo do pacote acima."));
-    }).catch(() => {});
+    // lido uma vez só: recarregar a tela (ex.: "Atualizar") não procura de novo
+    history.replaceState(null, "", "#/abrir");
+    caches.open("vistoria-recebido").then(lerRecebidos).then((r) => {
+      if (!r) return; // já aberto antes
+      if (r.lista.some((b) => b.length)) mostrar(ctx, area, r.lista, `O Android enviou: ${r.recebido}`);
+      else trocar(area, h("p", { class: "alerta" }, "Nenhum arquivo chegou pelo Compartilhar. Escolha o arquivo do pacote acima."),
+        h("p", { class: "ajuda" }, `O Android enviou: ${r.recebido || "nada"}`));
+    }).catch((e) => trocar(area, h("p", { class: "alerta" }, `Não foi possível ler o que chegou pelo Compartilhar (${e?.message ?? e}).`)));
   }
   const guardadas = h("div");
   ctx.listarDiligencias().then((lista) => {
