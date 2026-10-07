@@ -4,9 +4,19 @@ import { eventoIniciar } from "../estado.js";
 import { avaliarPacote } from "../pacote.js";
 import { h, trocar } from "./dom.js";
 
-export function desenhar(ctx) {
+// pacote recebido pelo "Compartilhar" do Android: o service worker o guarda e abre esta tela
+async function pacoteRecebido() {
+  const cache = await caches.open("vistoria-recebido");
+  const r = await cache.match("pacote-recebido");
+  if (!r) return null;
+  await cache.delete("pacote-recebido");
+  return r.text();
+}
+
+export function desenhar(ctx, rota) {
   const area = h("div");
-  const entrada = h("input", { type: "file", accept: ".vistoria,application/json" });
+  // sem filtro de tipo: o Android às vezes deixa o ".vistoria" cinza; o app confere o conteúdo
+  const entrada = h("input", { type: "file" });
   entrada.addEventListener("change", async () => {
     const arq = entrada.files?.[0];
     if (arq) await mostrar(ctx, area, await arq.text());
@@ -15,6 +25,12 @@ export function desenhar(ctx) {
     h("button", { type: "button", onclick: async () =>
       mostrar(ctx, area, await (await fetch("tests/fixtures/pacote_demo.vistoria")).text()) },
     "Usar pacote de demonstração (fictício)");
+  if (rota?.params.get("recebido")) {
+    pacoteRecebido().then((texto) => {
+      if (texto) mostrar(ctx, area, texto);
+      else trocar(area, h("p", { class: "alerta" }, "Nenhum arquivo chegou pelo Compartilhar. Escolha o arquivo do pacote acima."));
+    }).catch(() => {});
+  }
   const guardadas = h("div");
   ctx.listarDiligencias().then((lista) => {
     if (!lista.length) return;
@@ -28,8 +44,8 @@ export function desenhar(ctx) {
   return h("section", {}, h("h1", {}, "Abrir pacote do processo"),
     ctx.estado ? h("p", { class: "alerta" }, `Há uma diligência em andamento (Proc. ${ctx.estado.processo.numero}). ` +
       "Abrir outro pacote não a apaga: ela continua guardada e pode ser retomada abaixo.") : null,
-    h("p", { class: "ajuda" }, "Escolha o arquivo Pacote_<nº>.vistoria recebido pelo WhatsApp (como documento) " +
-      "ou por e-mail. Ele costuma ficar em Downloads."),
+    h("p", { class: "ajuda" }, "Mais fácil: no WhatsApp, segure o documento Pacote_<nº>.vistoria, toque em " +
+      "Compartilhar e escolha \"Vistoria in loco\". Ou escolha o arquivo aqui (ele costuma ficar em Downloads)."),
     h("label", {}, "Arquivo do pacote", entrada), demo, area, guardadas);
 }
 

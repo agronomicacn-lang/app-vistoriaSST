@@ -1,6 +1,6 @@
 // Service worker: guarda os arquivos do app para uso sem internet.
-// Rede primeiro (atÃ© 3 s), depois o que estÃ¡ guardado. O aviso de versÃ£o nova vem na Fase 4.
-const VERSAO = "vistoria-0.4.0";
+// Rede primeiro (até 3 s), depois o que está guardado. O aviso de versão nova vem na Fase 4.
+const VERSAO = "vistoria-0.4.1";
 const ARQUIVOS = [
  "./",
  "index.html",
@@ -49,16 +49,31 @@ self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(VERSAO).then((c) => c.addAll(ARQUIVOS)));
 });
 
-// a versÃ£o nova sÃ³ assume quando o perito toca em "Atualizar" (nunca no meio de uma tela)
+// a versão nova só assume quando o perito toca em "Atualizar" (nunca no meio de uma tela)
 self.addEventListener("message", (e) => { if (e.data === "atualizar") self.skipWaiting(); });
 
+const RECEBIDO = "vistoria-recebido"; // pacote recebido pelo "Compartilhar", até ser aberto no app
+
 self.addEventListener("activate", (e) => {
-  e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== VERSAO).map((k) => caches.delete(k))))
+  e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== VERSAO && k !== RECEBIDO).map((k) => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
 
 self.addEventListener("fetch", (e) => {
-  if (e.request.method !== "GET" || new URL(e.request.url).origin !== location.origin) return;
+  const url = new URL(e.request.url);
+  if (e.request.method === "POST" && url.pathname.endsWith("/receber-pacote")) {
+    // "Compartilhar → Vistoria in loco" (WhatsApp, Arquivos, e-mail): o Android envia o arquivo para cá
+    e.respondWith((async () => {
+      const dados = await e.request.formData();
+      const arquivo = dados.getAll("pacote").find((x) => typeof x !== "string");
+      const cache = await caches.open(RECEBIDO);
+      await cache.put("pacote-recebido", new Response(arquivo ? await arquivo.text() : "",
+        { headers: { "Content-Type": "application/json" } }));
+      return Response.redirect(new URL("index.html#/abrir?recebido=1", self.registration.scope).href, 303);
+    })());
+    return;
+  }
+  if (e.request.method !== "GET" || url.origin !== location.origin) return;
   e.respondWith((async () => {
     const cache = await caches.open(VERSAO);
     try {
