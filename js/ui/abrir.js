@@ -1,7 +1,7 @@
 // Abrir pacote (telas v2, telas complementares): confere a integridade e faz a checagem pré-diligência.
 import { pedirPersistencia } from "../db.js";
 import { eventoIniciar } from "../estado.js";
-import { avaliarPacote } from "../pacote.js";
+import { avaliarPacote, avaliarRecebidos } from "../pacote.js";
 import { h, trocar } from "./dom.js";
 
 // pacote recebido pelo "Compartilhar" do Android: o service worker o guarda e abre esta tela
@@ -9,9 +9,14 @@ async function pacoteRecebido() {
   const cache = await caches.open("vistoria-recebido");
   const r = await cache.match("pacote-recebido");
   if (!r) return null;
+  const lista = [];
+  for (let i = 0; i < Number(r.headers.get("X-Quantos") ?? 0); i++) {
+    const a = await cache.match(`pacote-recebido/${i}`);
+    if (a) lista.push(new Uint8Array(await a.arrayBuffer()));
+    await cache.delete(`pacote-recebido/${i}`);
+  }
   await cache.delete("pacote-recebido");
-  return { bytes: new Uint8Array(await r.arrayBuffer()),
-    recebido: decodeURIComponent(r.headers.get("X-Recebido") ?? "") };
+  return { lista, recebido: decodeURIComponent(r.headers.get("X-Recebido") ?? "") };
 }
 
 export function desenhar(ctx, rota) {
@@ -28,7 +33,7 @@ export function desenhar(ctx, rota) {
     "Usar pacote de demonstração (fictício)");
   if (rota?.params.get("recebido")) {
     pacoteRecebido().then((r) => {
-      if (r?.bytes.length) mostrar(ctx, area, r.bytes, `O Android enviou: ${r.recebido}`);
+      if (r?.lista.some((b) => b.length)) mostrar(ctx, area, r.lista, `O Android enviou: ${r.recebido}`);
       else trocar(area, h("p", { class: "alerta" }, "Nenhum arquivo chegou pelo Compartilhar. Escolha o arquivo do pacote acima."));
     }).catch(() => {});
   }
@@ -50,8 +55,9 @@ export function desenhar(ctx, rota) {
     h("label", {}, "Arquivo do pacote", entrada), demo, area, guardadas);
 }
 
+// bytes: o arquivo escolhido; ou a lista de arquivos que chegaram pelo Compartilhar
 async function mostrar(ctx, area, bytes, origem) {
-  const r = await avaliarPacote(bytes, ctx.catalogo);
+  const r = Array.isArray(bytes) ? await avaliarRecebidos(bytes, ctx.catalogo) : await avaliarPacote(bytes, ctx.catalogo);
   if (!r.ok) {
     trocar(area, h("div", { class: "cartao falta", role: "alert" }, h("p", { class: "alerta" }, r.erro),
       origem ? h("p", { class: "ajuda" }, origem) : null));

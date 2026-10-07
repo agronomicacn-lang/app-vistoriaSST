@@ -61,3 +61,16 @@ export async function avaliarPacote(texto, catalogo) {
       `o app usa a versão ${catalogo.versao}.`);
   return { ok: true, pacote, avisos };
 }
+
+// O "Compartilhar" do WhatsApp manda o documento e, junto, um texto com o nome dele (o Chrome o entrega
+// como "shared.txt"): confere cada arquivo recebido e usa o que for pacote; se nenhum for, explica o maior.
+export async function avaliarRecebidos(lista, catalogo) {
+  const ordem = [...lista].sort((a, b) => b.length - a.length);
+  let primeiro = null;
+  for (const bytes of ordem) {
+    const r = await avaliarPacote(bytes, catalogo);
+    if (r.ok) return r;
+    primeiro ??= r;
+  }
+  return primeiro ?? { ok: false, erro: "Nenhum arquivo chegou pelo Compartilhar." };
+}

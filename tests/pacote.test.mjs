@@ -3,7 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { gzipSync } from "node:zlib";
-import { avaliarPacote, canonico, hashPacote } from "../js/pacote.js";
+import { avaliarPacote, avaliarRecebidos, canonico, hashPacote } from "../js/pacote.js";
 
 const catalogo = JSON.parse(readFileSync(new URL("../catalogo.json", import.meta.url), "utf8"));
 const demo = readFileSync(new URL("./fixtures/pacote_demo.vistoria", import.meta.url), "utf8");
@@ -44,6 +44,18 @@ test("arquivo errado diz o que é: zip exportado, PDF, ou o tamanho do que chego
   assert.match((await avaliarPacote(bytes("%PDF-1.4 resto"), catalogo)).erro, /PDF/);
   assert.match((await avaliarPacote(bytes("lixo"), catalogo)).erro, /ilegível.*4 bytes/);
   assert.match((await avaliarPacote(bytes("lixo\u0001x"), catalogo)).erro, /começa com "lixo·x"/);
+});
+
+test("Compartilhar do WhatsApp: o texto vira shared.txt antes do pacote; o app acha o pacote", async () => {
+  const nome = new TextEncoder().encode("Pacote_0010000-00.2025.5.18.0101.vistoria");
+  const puro = new Uint8Array(readFileSync(new URL("./fixtures/pacote_demo.vistoria", import.meta.url)));
+  const r = await avaliarRecebidos([nome, puro], catalogo);
+  assert.equal(r.ok, true);
+  assert.equal(r.pacote.processo.numero, "0010000-00.2025.5.18.0101");
+  const ruim = await avaliarRecebidos([nome, new TextEncoder().encode("{}")], catalogo);
+  assert.equal(ruim.ok, false);
+  assert.match(ruim.erro, /41 bytes/); // explica o maior arquivo recebido
+  assert.equal((await avaliarRecebidos([], catalogo)).ok, false);
 });
 
 test("versão diferente do catálogo gera aviso, não recusa", async () => {

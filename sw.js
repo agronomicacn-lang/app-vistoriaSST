@@ -1,6 +1,6 @@
 // Service worker: guarda os arquivos do app para uso sem internet.
 // Rede primeiro (até 3 s), depois o que está guardado. O aviso de versão nova vem na Fase 4.
-const VERSAO = "vistoria-0.4.3";
+const VERSAO = "vistoria-0.4.4";
 const ARQUIVOS = [
  "./",
  "index.html",
@@ -65,14 +65,15 @@ self.addEventListener("fetch", (e) => {
     // "Compartilhar → Vistoria in loco" (WhatsApp, Arquivos, e-mail): o Android envia o arquivo para cá
     e.respondWith((async () => {
       const dados = await e.request.formData();
-      const arquivo = dados.getAll("pacote").find((x) => typeof x !== "string");
+      const arquivos = dados.getAll("pacote").filter((x) => typeof x !== "string");
       // o que o Android mandou, para mostrar se o arquivo não for um pacote
       const campos = [...dados].map(([k, v]) => typeof v === "string" ? `${k}: "${v.slice(0, 80)}"`
         : `${k}: arquivo "${v.name}" (${v.type || "sem tipo"}, ${v.size} bytes)`).join("; ");
       const cache = await caches.open(RECEBIDO);
       // guarda os bytes como vieram (podem estar compactados): quem lê é a tela Abrir pacote
-      await cache.put("pacote-recebido", new Response(arquivo ?? new Blob([]),
-        { headers: { "X-Recebido": encodeURIComponent(campos || "nada") } }));
+      await Promise.all(arquivos.map((a, i) => cache.put(`pacote-recebido/${i}`, new Response(a))));
+      await cache.put("pacote-recebido", new Response("", { headers: {
+        "X-Quantos": String(arquivos.length), "X-Recebido": encodeURIComponent(campos || "nada") } }));
       return Response.redirect(new URL("index.html#/abrir?recebido=1", self.registration.scope).href, 303);
     })());
     return;

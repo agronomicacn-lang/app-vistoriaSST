@@ -25,6 +25,9 @@
   "method": "POST",
   "enctype": "multipart/form-data",
   "params": {
+   "title": "titulo",
+   "text": "texto",
+   "url": "link",
    "files": [
     {
      "name": "pacote",
