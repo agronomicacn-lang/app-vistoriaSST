@@ -43,6 +43,7 @@ test("arquivo errado diz o que é: zip exportado, PDF, ou o tamanho do que chego
   assert.match((await avaliarPacote(bytes("PK\u0003\u0004resto"), catalogo)).erro, /\.zip/);
   assert.match((await avaliarPacote(bytes("%PDF-1.4 resto"), catalogo)).erro, /PDF/);
   assert.match((await avaliarPacote(bytes("lixo"), catalogo)).erro, /ilegível.*4 bytes/);
+  assert.match((await avaliarPacote(bytes("lixo\u0001x"), catalogo)).erro, /começa com "lixo·x"/);
 });
 
 test("versão diferente do catálogo gera aviso, não recusa", async () => {

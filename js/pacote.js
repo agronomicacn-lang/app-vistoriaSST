@@ -45,7 +45,9 @@ export async function avaliarPacote(texto, catalogo) {
     pacote = JSON.parse(String(texto).replace(/^\uFEFF/, ""));
   } catch {
     const tamanho = new TextEncoder().encode(String(texto)).length;
-    return { ok: false, erro: `O arquivo não é um pacote de vistoria (conteúdo ilegível; chegaram ${tamanho} bytes).` };
+    const inicio = [...String(texto).slice(0, 60)].map((c) => (c < " " || c === "\uFFFD" ? "·" : c)).join("");
+    return { ok: false, erro: `O arquivo não é um pacote de vistoria (conteúdo ilegível; chegaram ${tamanho} bytes; ` +
+      `começa com "${inicio}").` };
   }
   if (!pacote || pacote.tipo !== "pacote_vistoria" || pacote.versao !== 1)
     return { ok: false, erro: "O arquivo não é um pacote de vistoria gerado pelo PREPARAR VISTORIA." };

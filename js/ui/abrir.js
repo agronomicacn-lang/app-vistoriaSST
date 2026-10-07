@@ -10,7 +10,8 @@ async function pacoteRecebido() {
   const r = await cache.match("pacote-recebido");
   if (!r) return null;
   await cache.delete("pacote-recebido");
-  return new Uint8Array(await r.arrayBuffer());
+  return { bytes: new Uint8Array(await r.arrayBuffer()),
+    recebido: decodeURIComponent(r.headers.get("X-Recebido") ?? "") };
 }
 
 export function desenhar(ctx, rota) {
@@ -26,8 +27,8 @@ export function desenhar(ctx, rota) {
       mostrar(ctx, area, new Uint8Array(await (await fetch("tests/fixtures/pacote_demo.vistoria")).arrayBuffer())) },
     "Usar pacote de demonstração (fictício)");
   if (rota?.params.get("recebido")) {
-    pacoteRecebido().then((bytes) => {
-      if (bytes?.length) mostrar(ctx, area, bytes);
+    pacoteRecebido().then((r) => {
+      if (r?.bytes.length) mostrar(ctx, area, r.bytes, `O Android enviou: ${r.recebido}`);
       else trocar(area, h("p", { class: "alerta" }, "Nenhum arquivo chegou pelo Compartilhar. Escolha o arquivo do pacote acima."));
     }).catch(() => {});
   }
@@ -49,10 +50,11 @@ export function desenhar(ctx, rota) {
     h("label", {}, "Arquivo do pacote", entrada), demo, area, guardadas);
 }
 
-async function mostrar(ctx, area, bytes) {
+async function mostrar(ctx, area, bytes, origem) {
   const r = await avaliarPacote(bytes, ctx.catalogo);
   if (!r.ok) {
-    trocar(area, h("div", { class: "cartao falta", role: "alert" }, h("p", { class: "alerta" }, r.erro)));
+    trocar(area, h("div", { class: "cartao falta", role: "alert" }, h("p", { class: "alerta" }, r.erro),
+      origem ? h("p", { class: "ajuda" }, origem) : null));
     return;
   }
   const p = r.pacote;
